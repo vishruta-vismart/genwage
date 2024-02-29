@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Page with Image</title>
+    <style>
+         body {
+        margin: 20px; /* Add a margin to create space before the body border */
+        padding: 2px;
+        background-color: white;
+        font-family: Arial, sans-serif;
+        font-size: small;
+        /* border: 5px solid black; Adjust border style and color as needed */
+    }
+
+        #header {
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        #header img {
+            height: 5%;
+            width: 25%;
+            display: block;
+            margin: 0 auto;
+            /* Adjust image height and width as needed */
+        }
+
+        #content {
+            margin-left: 10%;
+            padding-top: 20px;
+            
+            display: flex; /* Display content in a row */
+        }
+
+        .total {
+            margin-left: 10%;
+            padding-top: 20px;
+           
+            
+        }
+
+        .pair {
+            margin-bottom: 10px;
+            display: flex; /* Make div and label in a row */
+              align-items: center; /* Center align items vertically */
+        }
+
+        label, .values {
+            flex: 0 0 10%; /* Adjust width of label */
+            margin-right: 40px;
+            white-space: nowrap; /* Prevent label text from wrapping */
+            
+            text-overflow: ellipsis;
+        }
+
+        label, .mainvalues {
+            flex: 0 0 10%; /* Adjust width of label */
+            margin-right: 40px;
+            white-space: nowrap; /* Prevent label text from wrapping */
+           
+            text-overflow: ellipsis;
+        }
+
+        .box1,
+        .box2 {
+            display: inline-block;
+            border: 2px solid black;
+            text-align: center;
+            padding: 2px;
+        }
+
+        .box1 {
+            width: 40%;
+        }
+
+        .box2 {
+            width: 20%;
+        }
+
+        .deduction {
+            margin-left: 30%; /* Adjust the margin as needed */
+            display: flex; /* Display deduction content in a column */
+            flex-direction: column; /* Display deduction content in a column */
+        }
+
+        .deduction div {
+                
+            text-align: center;
+            padding: 2px;
+            margin-bottom: 9px;
+        }
+    </style>
+</head>
+<body style="border: 5px solid black;"><br>
+    <div id="header">
+        <img src="img/vishruta.jpeg" alt="Vishruta Image">
+    </div><br>
+    <div style="margin-left: 10%;">
+        <div class="pair">
+            <label>SALARY SLIP</label>
+            <div class="mainvalues" id="value1">Jan-24</div>
+        </div><br>
+        <div class="pair">
+            <label>NAME</label>
+            <div class="mainvalues" id="value2">RAM KUMAR YADAV</div>
+        </div><br>
+        <div class="pair">
+            <label>DESIGNATION</label>
+            <div class="mainvalues" id="value3">FITTER</div>
+        </div><BR>
+    </div>
+    <div id="content">
+        <div class="earnings">
+            <div style="border: 2px solid black; width: 93%; text-align: center; padding: 2px;">EARNINGS</div><BR>
+            <div class="pair">
+                <label>GROSS SALARY</label>&nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;
+                <div class="values" id="value1"> 28000</div>
+            </div><br>
+            <div class="pair">
+                <label>SALARY / DAY</label> &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;
+                <div class="values" id="value2"> 1077</div>
+            </div><br>
+            <div class="pair">
+                <label>NO. OF DAYS WORKED</label>&nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;
+                <div class="values" id="value3">26</div>
+            </div><BR>
+            <div class="pair">
+                <div class="box1" style="width: 70%;">EARNED SALARY</div>
+                <div class="box2">28000</div>
+            </div><br>
+            <div class="pair">
+                <label>OT / HR</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;
+                <div class="values" id="value1">108</div>
+            </div><br>
+            <div class="pair">
+                <label>OT HOURS WORKED</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+                <div class="values" id="value2">103</div>
+            </div><br>
+            <div class="pair">
+                <div class="box1" style="width: 70%;">EARNED OT</div>
+                <div class="box2">11092</div>
+            </div><br>
+            <div class="pair">
+                <div style="font-weight: bold; width: 70%;" class="box1">TOTAL EARNINGS</div>
+                <div style="font-weight: bold;" class="box2">39092</div>
+            </div>
+        </div>
+
+        <div class="deduction">
+            <div style="border: 2px solid black; width: 90%; text-align: center; padding: 2px;">DEDUCTIONS</div>
+            <div class="pair">
+                <label>PF</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <div class="values" id="value1">2143</div>
+            </div>
+            <div class="pair">
+                <label>PT</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+                <div class="values" id="value2">200</div>
+            </div>
+            <div class="pair">
+                <label>ADVANCES</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;
+                <div class="values" id="value3">3000</div>
+            </div>
+            <div class="pair">
+                <label>PREVIOUS MONTH EXCESS PAID</label> &nbsp; &nbsp; &nbsp;
+                <div class="values" id="value3">2522</div>
+            </div><br><br><br><br><br><br><br>
+            <div class="pair">
+                <div style="font-weight: bold; width: 71%;" class="box1">TOTAL DEDUCTIONS</div>
+                <div style="font-weight: bold;" class="box2">7865</div>
+            </div>
+        </div>
+    </div>
+<div class="total">
+    <div class="pair">
+        <div class="box1" style="width: 71%;">SALARY PAYABLE</div>
+        <div class="box2">11092</div>
+    </div><br>
+    <div class="pair">
+        <div class="box1" style="width: 71%;">SALARY PAID</div>
+        <div class="box2">11092</div>
+    </div><br>
+</div><br><br>
+    <!-- Add your content below this line -->
+</body>
+</html>

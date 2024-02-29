@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>ViSmart Factory</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        .validation-failed {
+            border: 2px solid red !important;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+
+            filter: invert(100%);
+        }
+
+        /* Style for the popup form */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            outline: 3px solid white;
+            border-radius: 2%;
+
+        }
+
+        .popupProduct {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            outline: 3px solid white;
+            border-radius: 2%;
+            max-height: 60%;
+            overflow-y: auto;
+            /* Add this line to enable vertical scrolling */
+        }
+
+
+        /* Style to close button */
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        #closeUserFormButton {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            /* Adjust the width and height to make it circular */
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            margin-top: 1%;
+            margin-right: 3%;
+        }
+
+        #closeUserFormButton:hover {
+            background-color: darkred;
+        }
+
+        #closeProductFormButton {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            /* Adjust the width and height to make it circular */
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            margin-top: 1%;
+            margin-right: 3%;
+        }
+
+        #closeProductFormButton:hover {
+            background-color: darkred;
+        }
+
+        #closeVehicleFormButton {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            /* Adjust the width and height to make it circular */
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            margin-top: 1%;
+            margin-right: 3%;
+        }
+
+        #closeVehicleFormButton:hover {
+            background-color: darkred;
+        }
+
+        #closeattendanceFormButton {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            /* Adjust the width and height to make it circular */
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            margin-top: 1%;
+            margin-right: 3%;
+        }
+
+        #closeattendanceFormButton:hover {
+            background-color: darkred;
+        }
+
+        #closeDaysinMonthFormButton {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            /* Adjust the width and height to make it circular */
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            margin-top: 1%;
+            margin-right: 3%;
+        }
+
+        #closeDaysinMonthFormButton:hover {
+            background-color: darkred;
+        }
+
+
+        #selectContractor option {
+            background-color: white;
+            color: black;
+            /* Set text color */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid position-relative d-flex p-0">
+
+        <!-- Sidebar Start -->
+        <div class="sidebar  bg-white">
+            <nav class="navbar bg-white">
+                <a class="navbar-brand mx-4 mb-3 ">
+                    <h4 class="text-primary">Vishruta Enterprises</h4>
+                </a>
+
+                <div class="navbar-nav w-100">
+                    <a href="Employeedetails.html" class="nav-item nav-link active" id="dashboardLink">
+                        <i class="fa fa-chart-bar me-2"></i>Master
+                    </a>
+                    <a href="salarywages.html" class="nav-item nav-link" id="salesOrderLink">
+                        <i class="fa fa-th me-2"></i>Salary Wages
+                    </a>
+
+                </div>
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <nav class="navbar navbar-expand bg-white navbar-dark sticky-top px-4 py-0">
+                <a class="navbar-brand d-flex d-lg-none me-4">
+                    <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
+                </a>
+                <a href="#" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-bars"></i>
+                </a>
+
+            </nav>
+
+
+            <!-- Navbar End -->
+
+            <!-- Content Start here -->
+
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="bg-secondary rounded h-100 p-4">
+                            <h4>Master Data</h4><br>
+                            <button class="btn btn-primary m-1" id="userformopenbutton" onclick="openUserForm()">Add
+                                Contractor</button>
+                            <button class="btn btn-primary m-1" id="productformopenbutton"
+                                onclick="openProductForm()">Add Employee</button>
+                            <button class="btn btn-primary m-1" id="vehicleformopenbutton"
+                                onclick="openVehicleForm()">Employee Fixed Wages</button>
+                            <button class="btn btn-primary m-1" id="vehicleformopenbutton"
+                                onclick="openAttendanceForm()">Attendance</button>
+                            <button class="btn btn-primary m-1" id="vehicleformopenbutton"
+                                onclick="openDaysinMonthPopupForm()">Add Number of Days in a Month</button><br><br><br>
+                        </div>
+                        <!-- Popup Form for User -->
+                        <form class="needs-validation" novalidate>
+                            <div id="userPopupForm" class="col-sm-12 col-xl-6 popup">
+                                <div class="bg-secondary rounded h-100 p-4">
+                                    <button class="close" id="closeUserFormButton" type="button"
+                                        data-action="clear">&times;</button>
+                                    <h4 class="mb-4">Enter Contractor Details</h4>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="contractorName"
+                                            placeholder="User Name" required>
+                                        <label for="username">Enter Contractor Name</label>
+                                        <div class="invalid-feedback">
+                                            Please enter a contractor name.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select " id="contractorType" name="vehicleNumber" required>
+                                            <option style="background-color: grey; color: black;">Select Workmen Working
+                                                Hours Per Day</option>
+                                            <option style="background-color: white; color: black;">AGENT</option>
+                                            <option style="background-color: white; color: black;">STAFF</option>
+                                            <option style="background-color: white; color: black;">SUPERVISE</option>
+                                            <option style="background-color: white; color: black;">TEMPSUPERVISE
+                                            </option>
+                                            <option style="background-color: white; color: black;">VENDOR</option>
+
+                                        </select>
+                                        <div class="invalid-feedback">Please select Workmen Working Hours Per Day</div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select " id="workingHours" name="vehicleNumber" required>
+                                            <option style="background-color: grey; color: black;">Select Workmen Working
+                                                Hours Per Day</option>
+                                            <option value="8" style="background-color: white; color: black;">8 hrs
+                                            </option>
+                                            <option value="9" style="background-color: white; color: black;">9 hrs
+                                            </option>
+                                            <option value="10" style="background-color: white; color: black;">10 hrs
+                                            </option>
+
+                                        </select>
+                                        <div class="invalid-feedback">Please select Workmen Working Hours Per Day</div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select " id="weekdayOTtype" name="vehicleNumber" required>
+                                            <option style="background-color: grey; color: black;">Select Weekday OT Type
+                                            </option>
+                                            <option style="background-color: white; color: black;">1</option>
+                                            <option style="background-color: white; color: black;">1.5</option>
+                                            <option style="background-color: white; color: black;">2</option>
+
+                                        </select>
+                                        <div class="invalid-feedback">Please select Weekday OT Type</div>
+                                    </div>
+
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select " id="sundayOTtype" name="vehicleNumber" required>
+                                            <option style="background-color: grey; color: black;">Select Sunday/Holiday
+                                                OT Type</option>
+                                            <option style="background-color: white; color: black;">1</option>
+                                            <option style="background-color: white; color: black;">1.5</option>
+                                            <option style="background-color: white; color: black;">2</option>
+
+                                        </select>
+                                        <div class="invalid-feedback">Please select Sunday/Holiday OT Type</div>
+                                    </div>
+
+
+                                    <div class="form-floating mb-3">
+
+
+                                        <!-- Success message container -->
+                                        <div id="successUserContainer" class="mb-3"></div>
+                                        <!-- Error message container -->
+                                        <div id="errorUserContainer" class="mb-3"></div>
+                                        <button class="btn btn-success" onclick="postUser(event)">Submit</button>
+                                        <button class="btn btn-primary m-2" type="button" data-action="clear"
+                                            onclick="clearUserForm()">Clear</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- Popup Form for Product -->
+
+                        <div id="productPopupForm" class="col-sm-12 col-xl-6 popupProduct">
+                            <div class="bg-secondary rounded h-100 p-4">
+                                <button class="close" id="closeProductFormButton" type="button"
+                                    data-action="clear">&times;</button>
+                                <h4 class="mb-4">Enter Employee Details</h4>
+
+                                <form class="validation-product" novalidate>
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select " id="employeeType" name="vehicleNumber" required>
+                                            <option style="background-color: grey; color: black;">Select Employee Type
+                                            </option>
+                                            <option style="background-color: white; color: black;">WorkMan</option>
+                                            <option style="background-color: white; color: black;">Staff</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select employee type</div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="employeeName"
+                                            placeholder="Product Id" required>
+                                        <label for="productid">Enter Employee Name</label>
+                                        <div class="invalid-feedback">
+                                            Please enter employee name.
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="employeeDesignation"
+                                            placeholder="Product Id" required>
+                                        <label for="productid">Enter Employee Designation</label>
+                                        <div class="invalid-feedback">
+                                            Please enter employee designation.
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="siteWorkingName"
+                                            placeholder="Product Name" required>
+                                        <label for="productname">Enter Site-Working Name</label>
+                                        <div class="invalid-feedback">
+                                            Please enter Site-Working Name.
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="workOrderNumber"
+                                            placeholder="Net Weight" required>
+                                        <label for="netweight">Enter Work Order Number</label>
+                                        <div class="invalid-feedback">
+                                            Please enter Work Order Number.
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control" id="joiningDate"
+                                            placeholder="Net Weight" required>
+                                        <label for="netweight">Select Joining Date</label>
+                                        <div class="invalid-feedback">
+                                            Please enter joining date.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select " id="selectContractor" name="vehicleNumber"
+                                            required>
+                                            <option style="background-color: blue; color: black;">Select Contractor
+                                            </option>
+
+                                        </select>
+                                        <div class="invalid-feedback">Please select contractor</div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select " id="recruitmentType" name="vehicleNumber" required>
+                                            <option style="background-color: grey; color: black;">Select Recruitment
+                                                Type</option>
+                                            <option style="background-color: white; color: black;">Company</option>
+                                            <option style="background-color: white; color: black;">Contractor</option>
+                                            <option style="background-color: white; color: black;">Vendor</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select Recruitment type</div>
+                                    </div>
+
+
+
+
+
+                                    <div class="form-floating mb-3">
+                                        <!-- Success message container -->
+                                        <div id="successProductContainer" class="mb-3"></div>
+                                        <!-- Error message container -->
+                                        <div id="errorProductContainer" class="mb-3"></div>
+                                        <button class="btn btn-success" onclick="postProduct(event)"
+                                            type="submit">Submit</button>
+                                        <button class="btn btn-primary m-2" type="button" data-action="clear"
+                                            onclick="clearProductForm()">Clear</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+
+
+                        <form class="validation-vehicle" novalidate>
+                            <div id="vehiclePopupForm" class="col-sm-12 col-xl-6 popupProduct">
+                                <div class="bg-secondary rounded h-100 p-4">
+                                    <button class="close" id="closeVehicleFormButton" type="button"
+                                        data-action="clear">&times;</button>
+                                    <h4 class="mb-4">Enter Employee Fixed Wages Details</h4>
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="selectEmployeeName" name="employeeName"
+                                            required>
+                                            <option style="background-color: grey; color: black;">Select Employee Name
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select employee name</div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="selectEmployeeDesignation"
+                                            placeholder="Employee Designation" required
+                                            style="background-color: black;">
+                                        <label for="employeeDesignation">Employee Designation</label>
+                                        <div class="invalid-feedback">Please select Employee Designation</div>
+                                    </div>
+
+
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="basicDA"
+                                            placeholder="Vehicle Name" required>
+                                        <label for="vehicleName">Enter Basic + DA</label>
+                                        <div class="invalid-feedback">
+                                            Please enter Basic + DA.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="hra" placeholder="Vehicle Number"
+                                            required>
+                                        <label for="vehicleNumber">Enter HRA</label>
+                                        <div class="invalid-feedback">
+                                            Please enter HRA.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="foodAllowance"
+                                            placeholder="Vehicle Number" required>
+                                        <label for="vehicleNumber">Enter Food Allowance</label>
+                                        <div class="invalid-feedback">
+                                            Please enter Food Allowance.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="siteAllowance"
+                                            placeholder="Vehicle Number" required>
+                                        <label for="vehicleNumber">Enter Site Allowance</label>
+                                        <div class="invalid-feedback">
+                                            Please enter Site Allowance.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="grossTotal"
+                                            placeholder="Driver Details" required>
+                                        <label for="driverName">Enter Gross Total</label>
+                                        <div class="invalid-feedback">
+                                            Please enter Gross Total.
+                                        </div>
+
+                                        <!-- Updated Success and Error Message Containers -->
+                                        <div id="successVehicleContainer" class="text-success mb-3"></div>
+                                        <div id="errorVehicleContainer" class="text-danger mb-3"></div>
+
+                                        <button class="btn btn-success" type="submit"
+                                            onclick="postVehicle(event)">Submit</button>
+                                        <button class="btn btn-primary" type="button" data-action="clear"
+                                            onclick="clearVehicleForm()">Clear</button>
+                                    </div>
+                                    <div id="qrCodeContainer"></div>
+
+                                </div>
+                            </div>
+                        </form>
+
+                        <form class="validation-Attendance" novalidate>
+                            <div id="attendancePopupForm" class="col-sm-12 col-xl-6 popupProduct">
+                                <div class="bg-secondary rounded h-100 p-4">
+                                    <button class="close" id="closeattendanceFormButton" type="button"
+                                        data-action="clear">&times;</button>
+                                    <h4 class="mb-4">Enter Daily Attendance</h4>
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="selectEmployeeNameForAttendance"
+                                            name="employeeName" required>
+                                            <option style="background-color: grey; color: black;">Select Employee Name
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select employee name</div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control" id="currentDate"
+                                            placeholder="Employee Designation" style="background-color: black;" required
+                                            readonly>
+                                        <label for="employeeDesignation">Totay's Date</label>
+                                        <div class="invalid-feedback">Please select curret date</div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select " id="selectDay" name="vehicleNumber" required>
+                                            <option style="background-color: grey; color: black;">Select Day</option>
+                                            <option value="week day" style="background-color: white; color: black;">Week
+                                                Day</option>
+                                            <option value="sunday" style="background-color: white; color: black;">
+                                                Sunday/Holiday</option>
+                                            <option value="national festival holiday"
+                                                style="background-color: white; color: black;">National Festival Holiday
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select Recruitment type</div>
+                                    </div>
+
+
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control" id="inDate" placeholder="Vehicle Name"
+                                            required>
+                                        <label for="vehicleName">Enter In Date</label>
+                                        <div class="invalid-feedback">
+                                            Please enter in date.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="time" class="form-control" id="inTime" placeholder="Vehicle Number"
+                                            required>
+                                        <label for="vehicleNumber">Enter In Time</label>
+                                        <div class="invalid-feedback">
+                                            Please enter in time.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control" id="outDate"
+                                            placeholder="Vehicle Number" required>
+                                        <label for="vehicleNumber">Enter Out Date</label>
+                                        <div class="invalid-feedback">
+                                            Please enter out date.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="time" class="form-control" id="outTime"
+                                            placeholder="Vehicle Number" required>
+                                        <label for="vehicleNumber">Enter Out Time</label>
+                                        <div class="invalid-feedback">
+                                            Please enter out time.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="salaryAdvance"
+                                            placeholder="Vehicle Number">
+                                        <label for="vehicleNumber">Enter Salary Advance</label>
+                                        <div class="invalid-feedback">
+                                            Please enter Salary Advance.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="totalBreakHoursinOT"
+                                            placeholder="Vehicle Number">
+                                        <label for="vehicleNumber">Enter Total Break Hours in OT Time</label>
+                                        <div class="invalid-feedback">
+                                            Please enter Total Break Hours in OT Time.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="deductionAmount"
+                                            placeholder="Vehicle Number">
+                                        <label for="vehicleNumber">Enter Other Deduction Amount</label>
+                                        <div class="invalid-feedback">
+                                            Please enter Other Deduction Amount.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="fines"
+                                            placeholder="Driver Details">
+                                        <label for="driverName">Enter Fines/Damages/Loss</label>
+                                        <div class="invalid-feedback">
+                                            Please enter Fines/Damages/Loss amount.
+                                        </div>
+
+                                        <!-- Updated Success and Error Message Containers -->
+                                        <div id="successAttendanceContainer" class="text-success mb-3"></div>
+                                        <div id="errorAttendanceContainer" class="text-danger mb-3"></div>
+
+                                        <button class="btn btn-success" type="submit"
+                                            onclick="postAttendance(event)">Submit</button>
+                                        <button class="btn btn-primary" type="button" data-action="clear"
+                                            onclick="clearAttendanceForm()">Clear</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
+
+                        <form class="validation-DaysinMonth" novalidate>
+                            <div id="DaysinMonthPopupForm" class="col-sm-12 col-xl-6 popup">
+                                <div class="bg-secondary rounded h-100 p-4">
+                                    <button class="close" id="closeDaysinMonthFormButton" type="button"
+                                        data-action="clear">&times;</button>
+                                    <h4 class="mb-4">Enter the Details</h4>
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="selectContractorNameForDaysinMonth"
+                                            name="employeeName" required>
+                                            <option style="background-color: grey; color: black;">Select Contractor Type
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select contractor type</div>
+                                    </div>
+
+
+
+
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select " id="selectMonth" name="vehicleNumber" required>
+                                            <option style="background-color: grey; color: black;">Select Month</option>
+                                            <option style="background-color: white; color: black;">01</option>
+                                            <option style="background-color: white; color: black;">02</option>
+                                            <option style="background-color: white; color: black;">03</option>
+                                            <option style="background-color: white; color: black;">04</option>
+                                            <option style="background-color: white; color: black;">05</option>
+                                            <option style="background-color: white; color: black;">06</option>
+                                            <option style="background-color: white; color: black;">07</option>
+                                            <option style="background-color: white; color: black;">08</option>
+
+                                            <option style="background-color: white; color: black;">09</option>
+                                            <option style="background-color: white; color: black;">10</option>
+                                            <option style="background-color: white; color: black;">11</option>
+                                            <option style="background-color: white; color: black;">12</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select Recruitment type</div>
+                                    </div>
+
+
+                                    <div class="form-floating mb-3">
+                                        <input type="year" class="form-control" id="currentYear"
+                                            placeholder="Vehicle Name" style="background-color: black;" required
+                                            readonly>
+                                        <label for="vehicleName">Year</label>
+                                        <div class="invalid-feedback">
+                                            Please enter in current year.
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="numberofworkingdays"
+                                            placeholder="Vehicle Number" required>
+                                        <label for="vehicleNumber">No. of Working Days</label>
+                                        <div class="invalid-feedback">
+                                            Please enter No. of Working Days.
+                                        </div>
+
+                                        <!-- Updated Success and Error Message Containers -->
+                                        <div id="successDaysinMonthContainer" class="text-success mb-3"></div>
+                                        <div id="errorDaysinMonthContainer" class="text-success mb-3"></div>
+
+                                        <button class="btn btn-success" type="submit"
+                                            onclick="postDaysinMonthForm(event)">Submit</button>
+                                        <button class="btn btn-primary" type="button" data-action="clear"
+                                            onclick="clearDaysinMonthForm()">Clear</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Table End -->
+
+
+        <!-- Content End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/chart/chart.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+
+    <!--In transit report-->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Fetch data from the endpoint
+            fetch('http://localhost:3000/contractortype')
+                .then(response => response.json())
+                .then(data => {
+                    // Populate the dropdown with data and set background color
+                    var selectElement = document.getElementById('selectContractorNameForDaysinMonth');
+
+                    // Loop through the data and add options to the dropdown
+                    data.forEach(function (item) {
+                        var option = document.createElement('option');
+                        option.text = item.contractor_type;
+                        option.style.backgroundColor = 'white';
+                        selectElement.add(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the current date
+            const currentDate = new Date();
+
+            // Format the date as 'YYYY-MM-DD' (you can adjust the format as needed)
+            const formattedDate = currentDate.toISOString().split('T')[0];
+
+            // Set the formatted date to the input field
+            const currentDateInput = document.getElementById('currentDate');
+            currentDateInput.value = formattedDate;
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the current year
+            const currentYear = new Date().getFullYear();
+
+            // Set the current year to the input field
+            const currentYearInput = document.getElementById('currentYear');
+            currentYearInput.value = currentYear;
+        });
+    </script>
+
+    <script>
+        function openUserForm() {
+            document.getElementById('userPopupForm').style.display = 'block';
+            // Disable other buttons
+            //document.getElementById("userformopenbutton").disabled = true;
+            document.getElementById("vehicleformopenbutton").disabled = true;
+            document.getElementById("productformopenbutton").disabled = true;
+        }
+    </script>
+
+    <script>
+        // Close the popup form when the close button is clicked
+        document.getElementById("closeUserFormButton").addEventListener("click", function () {
+
+            location.reload(true);
+            //var userForm = document.getElementById("userPopupForm");
+
+
+            // Clear the values of form fields
+            // userForm.querySelector('#usertype').value = '';
+            //userForm.querySelector('#username').value = '';
+            // userForm.querySelector('#password').value = '';
+
+            // enable other buttons
+            //document.getElementById("userformopenbutton").disabled = false;
+            // document.getElementById("productformopenbutton").disabled = false;
+            // document.getElementById("vehicleformopenbutton").disabled = false;
+
+            // Hide the popup form
+            //userForm.style.display = "none";
+        });
+    </script>
+
+    <script>
+        function clearUserForm() {
+            // Clear the values of form fields
+            document.getElementById('contractorName').value = '';
+            document.getElementById('shiftTimings').value = '';
+            document.getElementById('econtactNumber').value = '';
+            document.getElementById('comission').value = '';
+            document.getElementById('otWages').value = '';
+
+
+            // Clear the validation state
+            var form = document.querySelector('.needs-validation');
+            form.classList.remove('was-validated');
+
+            // Clear error messages
+            var errorContainers = form.querySelectorAll('.invalid-feedback');
+            errorContainers.forEach(function (container) {
+                container.innerHTML = '';
+            });
+
+            // Clear success message container
+            var successContainer = document.getElementById('successUserContainer');
+            successContainer.innerHTML = '';
+
+            // Clear error message container
+            var errorContainer = document.getElementById('errorUserContainer');
+            errorContainer.innerHTML = '';
+
+            // Reset the form's validation state using Bootstrap's native validation
+            form.removeAttribute('novalidate');
+        }
+    </script>
+
+
+
+    <script>
+        function openProductForm() {
+            document.getElementById('productPopupForm').style.display = 'block';
+            // Disable other buttons
+            document.getElementById("userformopenbutton").disabled = true;
+            document.getElementById("vehicleformopenbutton").disabled = true;
+
+
+        }
+    </script>
+
+    <script>
+        // Close the popup form when the close button is clicked
+        document.getElementById("closeProductFormButton").addEventListener("click", function () {
+            location.reload(true);
+            //var productForm = document.getElementById("productPopupForm");
+
+            // Clear the values of form fields
+            // productForm.querySelector('#productid').value = '';
+            // productForm.querySelector('#productname').value = '';
+            //  productForm.querySelector('#netweight').value = '';
+            //  productForm.querySelector('#ppboxcount').value = '';
+
+            // enable other buttons
+            // document.getElementById("userformopenbutton").disabled = false;
+            //   document.getElementById("vehicleformopenbutton").disabled = false;
+
+            // Hide the popup form
+            //   productForm.style.display = "none";
+        });
+    </script>
+
+
+    <script>
+        function clearProductForm() {
+            // Clear the values of form fields
+            document.getElementById('nomineeContact').value = '';
+            document.getElementById('nomineeRelation').value = '';
+            document.getElementById('nomineeAdhar').value = '';
+            document.getElementById('nomineeName').value = '';
+            document.getElementById('employeeUnmarried').checked = true;
+            document.getElementById('employeeMarried').checked = false;
+            document.getElementById('employeeIFSC').value = '';
+            document.getElementById('employeeAccountNumber').value = '';
+            document.getElementById('employeeJoiningDate').value = '';
+            document.getElementById('employeePAN').value = '';
+            document.getElementById('employeeAdhar').value = '';
+            document.getElementById('employeeEmail').value = '';
+            document.getElementById('employeeContactNumber').value = '';
+            document.getElementById('employeeName').value = '';
+            document.getElementById('employeeType').value = '';
+            document.getElementById('employeeDesignation').value = '';
+            document.getElementById('uanNumber').value = '';
+
+            // Clear the validation state
+            var form = document.querySelector('.validation-product');
+            if (form) {
+                form.classList.remove('was-validated');
+
+                // Clear error messages for each input field
+                var errorContainers = form.querySelectorAll('.invalid-feedback');
+                errorContainers.forEach(function (container) {
+                    container.innerHTML = '';
+                });
+            }
+
+            // Clear success message container
+            var successContainer = document.getElementById('successProductContainer');
+            if (successContainer) {
+                successContainer.innerHTML = '';
+            }
+
+            // Clear global error message container
+            var errorContainer = document.getElementById('errorProductContainer');
+            if (errorContainer) {
+                errorContainer.innerHTML = '';
+            }
+
+            // Reset the form's validation state using Bootstrap's native validation
+            if (form) {
+                form.removeAttribute('novalidate');
+            }
+        }
+
+    </script>
+
+
+
+
+
+    <script>
+        function openVehicleForm() {
+            document.getElementById('vehiclePopupForm').style.display = 'block';
+            // Disable other buttons
+            document.getElementById("userformopenbutton").disabled = true;
+            document.getElementById("productformopenbutton").disabled = true;
+        }
+    </script>
+
+
+    <script>
+        function clearVehicleForm() {
+            // Clear the values of form fields
+            document.getElementById('advanceAmount').value = '';
+            document.getElementById('outTime').value = '';
+            document.getElementById('inTime').value = '';
+            document.getElementById('selectEmployeeName').value = '';
+
+            // Clear the validation state
+            var form = document.querySelector('.validation-vehicle');
+            if (form) {
+                form.classList.remove('was-validated');
+
+                // Clear error messages for each input field
+                var errorContainers = form.querySelectorAll('.invalid-feedback');
+                errorContainers.forEach(function (container) {
+                    container.innerHTML = '';
+                });
+            }
+
+            // Clear success message container
+            var successContainer = document.getElementById('successVehicleContainer');
+            if (successContainer) {
+                successContainer.innerHTML = '';
+            }
+
+            // Clear global error message container
+            var errorContainer = document.getElementById('errorVehicleContainer');
+            if (errorContainer) {
+                errorContainer.innerHTML = '';
+            }
+
+            clearQRCode();
+
+            // Reset the form's validation state using Bootstrap's native validation
+            if (form) {
+                form.removeAttribute('novalidate');
+            }
+        }
+    </script>
+
+
+    <script>
+        // Close the popup form when the close button is clicked
+        document.getElementById("closeVehicleFormButton").addEventListener("click", function () {
+            location.reload(true);
+            //var vehicleForm = document.getElementById("vehiclePopupForm");
+
+            // Clear the values of form fields
+            // vehicleForm.querySelector('#vehicleName').value = '';
+            // vehicleForm.querySelector('#vehicleNumber').value = '';
+            // vehicleForm.querySelector('#driverName').value = '';
+
+            // enable other buttons
+            // document.getElementById("userformopenbutton").disabled = false;
+            // document.getElementById("productformopenbutton").disabled = false;
+
+            // Hide the popup form
+            // vehicleForm.style.display = "none";
+        });
+
+    </script>
+
+    <script>
+        function openAttendanceForm() {
+            document.getElementById('attendancePopupForm').style.display = 'block';
+            // Disable other buttons
+            document.getElementById("userformopenbutton").disabled = true;
+            document.getElementById("productformopenbutton").disabled = true;
+        }
+    </script>
+
+    <script>
+        // Close the popup form when the close button is clicked
+        document.getElementById("closeattendanceFormButton").addEventListener("click", function () {
+            location.reload(true);
+        });
+
+    </script>
+
+    <script>
+        function openDaysinMonthPopupForm() {
+            document.getElementById('DaysinMonthPopupForm').style.display = 'block';
+            // Disable other buttons
+            document.getElementById("userformopenbutton").disabled = true;
+            document.getElementById("productformopenbutton").disabled = true;
+        }
+    </script>
+
+    <script>
+        // Close the popup form when the close button is clicked
+        document.getElementById("closeDaysinMonthFormButton").addEventListener("click", function () {
+            location.reload(true);
+        });
+
+    </script>
+
+
+    <script>
+        function postUser(event) {
+            if (event) {
+                event.preventDefault();
+            }
+
+            // Validate the form
+            var form = document.querySelector('.needs-validation');
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return;
+            }
+
+            // Get form values
+            var contractorName = document.getElementById('contractorName').value.toUpperCase();
+            var workingHours = document.getElementById('workingHours').value.toUpperCase();
+            var weekdayOTtype = document.getElementById('weekdayOTtype').value.toUpperCase();
+            var sundayOTtype = document.getElementById('sundayOTtype').value.toUpperCase();
+
+            // Create a data object with form values
+            var data = {
+                name: contractorName,
+                working_hours_per_day: workingHours,
+                weekday_ot_type: weekdayOTtype,
+                sunday_ot_type: sundayOTtype,
+
+            };
+            console.log(data);
+
+            // Perform POST request using Fetch API
+            fetch('http://localhost:3000/contractors', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+
+
+
+            })
+
+                .then(response => response.json())
+                .then(data => {
+
+                    // Handle success
+                    document.getElementById('successUserContainer').innerText = 'Contractor details submitted successfully!';
+                    document.getElementById('errorUserContainer').innerText = ''; // Clear any previous error message
+                })
+                .catch((error) => {
+                    // Handle error
+                    document.getElementById('successUserContainer').innerText = ''; // Clear any previous success message
+                    document.getElementById('errorUserContainer').innerText = 'Error submitting contractor details. Please try again.';
+                });
+
+            // Clear validation state
+            form.classList.remove('was-validated');
+        }
+
+        // Function to clear the form
+        function clearUserForm() {
+            // Clear all form fields
+            document.getElementById('contractorName').value = '';
+            document.getElementById('workingHours').value = '';
+            document.getElementById('weekdayOTtype').value = '';
+            document.getElementById('sundayOTtype').value = '';
+
+
+            // Clear the validation state
+            var form = document.querySelector('.needs-validation');
+            form.classList.remove('was-validated');
+
+            // Clear error messages
+            var errorContainers = form.querySelectorAll('.invalid-feedback');
+            errorContainers.forEach(function (container) {
+                container.innerHTML = '';
+            });
+
+            // Clear success message container
+            var successContainer = document.getElementById('successUserContainer');
+            successContainer.innerHTML = '';
+
+            // Clear error message container
+            var errorContainer = document.getElementById('errorUserContainer');
+            errorContainer.innerHTML = '';
+
+            // Reset the form's validation state using Bootstrap's native validation
+            form.removeAttribute('novalidate');
+        }
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to fetch contractor names and populate the dropdown
+            function populateContractorDropdown() {
+                var contractorDropdown = document.getElementById('selectContractor');
+
+                // Fetch data from the endpoint
+                fetch('http://localhost:3000/contractorname')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Clear existing options
+                        contractorDropdown.innerHTML = '<option style="background-color: grey; color: black;">Select Contractor</option>';
+
+                        // Populate the dropdown with fetched contractor names
+                        data.forEach(contractor => {
+                            var option = document.createElement('option');
+                            option.text = contractor.name;
+                            contractorDropdown.add(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching contractor names:', error);
+                    });
+            }
+
+            // Call the function to populate the dropdown on page load or as needed
+            populateContractorDropdown();
+        });
+    </script>
+
+
+
+
+
+    <script>
+        ///////////POst Employee Details////////////////////////////////////
+        function postProduct(event) {
+            if (event) {
+                event.preventDefault();
+
+                // Validate the form
+                var form = document.querySelector('.validation-product');
+                if (form.checkValidity() === false) {
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                // Get form values
+                var employeeType = document.getElementById('employeeType').value.toUpperCase();
+                var employeeName = document.getElementById('employeeName').value.toUpperCase();
+                var employeeDesignation = document.getElementById('employeeDesignation').value.toUpperCase();
+                var siteWorkingName = document.getElementById('siteWorkingName').value.toUpperCase();
+                var workOrderNumber = document.getElementById('workOrderNumber').value.toUpperCase();
+                var joiningDate = document.getElementById('joiningDate').value.toUpperCase();
+                var selectContractor = document.getElementById('selectContractor').value.toUpperCase();
+                var recruitmentType = document.getElementById('recruitmentType').value.toUpperCase();
+
+
+
+
+                // Create an object with the form data
+                var formData = {
+                    employeetype: employeeType,
+                    name: employeeName,
+                    designation: employeeDesignation,
+                    site_working_name: siteWorkingName,
+                    site_workorder_no: workOrderNumber,
+                    joining_date: joiningDate,
+                    contractor_name: selectContractor,
+                    recruitment_type: recruitmentType,
+
+                };
+
+
+
+                console.log(formData);
+
+                // Send the form data to the server using Fetch API
+                fetch('http://localhost:3000/employees', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle success
+                        document.getElementById('successProductContainer').innerText = 'Form submitted successfully';
+                    })
+                    .catch(error => {
+                        // Handle error
+                        document.getElementById('errorProductContainer').innerText = 'Form submitted successfully';
+                    });
+
+                // Clear validation state
+                form.classList.remove('was-validated');
+            }
+        }
+
+        function clearProductForm() {
+            // Clear form values
+            document.getElementById('employeeType').value = '';
+            document.getElementById('employeeName').value = '';
+            document.getElementById('employeeDesignation').value = '';
+            document.getElementById('siteWorkingName').value = '';
+            document.getElementById('workOrderNumber').value = '';
+            document.getElementById('joiningDate').value = '';
+            document.getElementById('selectContractor').value = '';
+            document.getElementById('recruitmentType').value = '';
+
+            // Clear validation state
+            var form = document.querySelector('.validation-product');
+            if (form) {
+                form.classList.remove('was-validated');
+            }
+
+            // Clear error and success messages
+            document.getElementById('errorProductContainer').innerText = '';
+            document.getElementById('successProductContainer').innerText = '';
+        }
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to fetch employee names and populate the dropdown
+            function populateEmployeeNamesDropdown() {
+                var employeeNameDropdown = document.getElementById('selectEmployeeName');
+
+                // Fetch data from the endpoint
+                fetch('http://localhost:3000/employeesname')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Clear existing options
+                        employeeNameDropdown.innerHTML = '<option style="background-color: white; color: black;">Select Employee Name</option>';
+
+                        //const DATA1 = {};
+                        // Populate the dropdown with fetched employee names
+                        data.forEach(employee => {
+                            var option = document.createElement('option');
+                            option.text = employee.name;
+                            option.style.backgroundColor = 'white'; // Set background color to white
+                            option.style.color = 'black'; // Set text color to black
+                            employeeNameDropdown.add(option);
+                        });
+
+                        const designation = {};
+                        const getvendor = {};
+                        data.forEach(item => {
+                            designation[item.name] = item.designation;
+                            getvendor[item.name] = item.contractor_type;
+                        });
+
+                        const getdesignation = designation["RAJESH"];
+                        const getvendorOfRamu = getvendor["RAJESH"];
+
+                        console.log("Designation of RAMU:", getdesignation);
+                        console.log("Contractor type of RAMU:", getvendorOfRamu);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching employee names:', error);
+                    });
+            }
+
+            // Call the function to populate the dropdown on page load or as needed
+            populateEmployeeNamesDropdown();
+        });
+    </script>
+
+
+
+    <script>
+        function postVehicle(event) {
+            if (event) {
+                event.preventDefault();
+            }
+
+            // Validate the form
+            var form = document.querySelector('.validation-vehicle');
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return;
+            }
+
+            // Get form values
+            var selectEmployeeName = document.getElementById('selectEmployeeName').value.toUpperCase();
+            var selectEmployeeDesignation = document.getElementById('selectEmployeeDesignation').value.toUpperCase();
+            var basicDA = document.getElementById('basicDA').value.toUpperCase();
+            var hra = document.getElementById('hra').value.toUpperCase();
+            var foodAllowance = document.getElementById('foodAllowance').value.toUpperCase();
+            var siteAllowance = document.getElementById('siteAllowance').value.toUpperCase();
+            var grossTotal = document.getElementById('grossTotal').value.toUpperCase();
+
+            // Create an object with the form data
+            var formData = {
+                employeename: selectEmployeeName,
+                designation: selectEmployeeDesignation,
+                fixed_basic_da: basicDA,
+                fixed_hra: hra,
+                fixed_food_allowance: foodAllowance,
+                fixed_site_allowance: siteAllowance,
+                fixed_gross_total: grossTotal
+            };
+
+            // Send the form data to the server using Fetch API
+            fetch('http://localhost:3000/employeefixedwage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Display the response message in the success container
+                    document.getElementById('successVehicleContainer').innerText = data.message;
+                    document.getElementById('errorVehicleContainer').innerText = ''; // Clear any previous error message
+                })
+                .catch(error => {
+                    // Handle error
+                    document.getElementById('successVehicleContainer').innerText = ''; // Clear any previous success message
+                    document.getElementById('errorVehicleContainer').innerText = 'Error submitting form. Please try again.';
+                });
+        }
+
+        function clearVehicleForm() {
+            // Clear the values of form fields
+            document.getElementById('selectEmployeeName').value = '';
+            document.getElementById('selectEmployeeDesignation').value = '';
+            document.getElementById('basicDA').value = '';
+            document.getElementById('hra').value = '';
+            document.getElementById('foodAllowance').value = '';
+            document.getElementById('siteAllowance').value = '';
+            document.getElementById('grossTotal').value = '';
+
+            // Clear the validation state
+            var form = document.querySelector('.validation-vehicle');
+            form.classList.remove('was-validated');
+
+            // Clear error messages
+            var errorContainers = form.querySelectorAll('.invalid-feedback');
+            errorContainers.forEach(function (container) {
+                container.innerHTML = '';
+            });
+
+            // Clear success message container
+            var successContainer = document.getElementById('successVehicleContainer');
+            successContainer.innerHTML = '';
+
+            // Clear error message container
+            var errorContainer = document.getElementById('errorVehicleContainer');
+            errorContainer.innerHTML = '';
+
+            // Reset the form's validation state using Bootstrap's native validation
+            form.removeAttribute('novalidate');
+        }
+    </script>
+
+
+
+    <script>
+        function postAttendance(event) {
+            if (event) {
+                event.preventDefault();
+            }
+
+            // Validate the form
+            var form = document.querySelector('.validation-Attendance');
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return;
+            }
+
+            // Get form values
+            var selectEmployeeNameForAttendance = document.getElementById('selectEmployeeNameForAttendance').value.toUpperCase();
+            var currentDate = document.getElementById('currentDate').value.toUpperCase();
+            var selectDay = document.getElementById('selectDay').value.toUpperCase();
+            var inDate = document.getElementById('inDate').value;
+            var inTime = document.getElementById('inTime').value;
+            var outDate = document.getElementById('outDate').value;
+            var outTime = document.getElementById('outTime').value;
+            var salaryAdvance = document.getElementById('salaryAdvance').value;
+            var totalBreakHoursinOT = document.getElementById('totalBreakHoursinOT').value;
+            var deductionAmount = document.getElementById('deductionAmount').value;
+            var fines = document.getElementById('fines').value;
+
+            // Create an object with the form data
+            var formData = {
+                employeename: selectEmployeeNameForAttendance,
+                date: currentDate,
+                day: selectDay,
+                in_date: inDate,
+                in_time: inTime,
+                out_date: outDate,
+                out_time: outTime,
+                salary_advance: salaryAdvance,
+                ot_time_break: totalBreakHoursinOT,
+                other_deduction: deductionAmount,
+                fines_damages_loss: fines
+            };
+
+            console.log(formData);
+
+            // Send the form data to the server using Fetch API
+            fetch('http://localhost:3000/dailyattendance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle success
+                    document.getElementById('successAttendanceContainer').innerText = 'Form submitted successfully';
+                    document.getElementById('errorAttendanceContainer').innerText = ''; // Clear any previous error message
+                })
+                .catch(error => {
+                    // Handle error
+                    document.getElementById('successAttendanceContainer').innerText = ''; // Clear any previous success message
+                    document.getElementById('errorAttendanceContainer').innerText = 'Error submitting form. Please try again.';
+                });
+        }
+
+        function clearVehicleForm() {
+            // Clear the values of form fields
+            document.getElementById('selectEmployeeName').value = '';
+            document.getElementById('inTime').value = '';
+            document.getElementById('outTime').value = '';
+            document.getElementById('advanceAmount').value = '';
+
+            // Clear the validation state
+            var form = document.querySelector('.validation-Attendance');
+            form.classList.remove('was-validated');
+
+            // Clear error messages
+            var errorContainers = form.querySelectorAll('.invalid-feedback');
+            errorContainers.forEach(function (container) {
+                container.innerHTML = '';
+            });
+
+            // Clear success message container
+            var successContainer = document.getElementById('successVehicleContainer');
+            successContainer.innerHTML = '';
+
+            // Clear error message container
+            var errorContainer = document.getElementById('errorVehicleContainer');
+            errorContainer.innerHTML = '';
+
+            // Reset the form's validation state using Bootstrap's native validation
+            form.removeAttribute('novalidate');
+        }
+    </script>
+
+
+    <script>
+        function postDaysinMonthForm(event) {
+            if (event) {
+                event.preventDefault();
+            }
+
+            // Validate the form
+            var form = document.querySelector('.validation-DaysinMonth');
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return;
+            }
+
+            // Get form values
+            var selectContractorNameForDaysinMonth = document.getElementById('selectContractorNameForDaysinMonth').value.toUpperCase();
+            var selectMonth = document.getElementById('selectMonth').value.toUpperCase();
+            var currentYear = document.getElementById('currentYear').value;
+            var numberofworkingdays = document.getElementById('numberofworkingdays').value;
+
+            // Create an object with the form data
+            var formData = {
+                contractor_type: selectContractorNameForDaysinMonth,
+                month: selectMonth,
+                year: currentYear,
+                noofdaysinmonth: numberofworkingdays
+            };
+
+            console.log(formData);
+
+            // Send the form data to the server using Fetch API
+            fetch('http://localhost:3000/noofdaysinmonth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle success
+                    document.getElementById('successDaysinMonthContainer').innerText = data; // Display the success message
+                    document.getElementById('errorDaysinMonthContainer').innerText = ''; // Clear any previous error message
+                })
+                .catch(error => {
+                    // Handle error
+                    document.getElementById('successDaysinMonthContainer').innerText = ''; // Clear any previous success message
+                    document.getElementById('errorDaysinMonthContainer').innerText = 'Form details submitted successfully.';
+                });
+        }
+
+        function clearDaysinMonthForm() {
+            // Clear the values of form fields
+            document.getElementById('selectContractorNameForDaysinMonth').value = '';
+            document.getElementById('selectMonth').value = '';
+            document.getElementById('currentYear').value = '';
+            document.getElementById('numberofworkingdays').value = '';
+
+            // Clear the validation state
+            var form = document.querySelector('.validation-DaysinMonth');
+            form.classList.remove('was-validated');
+
+            // Clear error messages
+            var errorContainers = form.querySelectorAll('.invalid-feedback');
+            errorContainers.forEach(function (container) {
+                container.innerHTML = '';
+            });
+
+            // Clear success message container
+            var successContainer = document.getElementById('successDaysinMonthContainer');
+            successContainer.innerHTML = '';
+
+            // Clear error message container
+            var errorContainer = document.getElementById('errorDaysinMonthContainer');
+            errorContainer.innerHTML = '';
+
+            // Reset the form's validation state using Bootstrap's native validation
+            form.removeAttribute('novalidate');
+        }
+    </script>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fetch employee names from the provided endpoint
+            fetch('http://localhost:3000/employeesname')
+                .then(response => response.json())
+                .then(data => {
+                    // Get the select element
+                    const selectEmployeeNameForAttendance = document.getElementById('selectEmployeeNameForAttendance');
+                    console.log(data);
+
+                    // Iterate through the employee names and add them to the dropdown
+                    data.forEach(employee => {
+                        const option = document.createElement('option');
+                        option.textContent = employee.name; // Assuming 'name' is the property in the object
+                        option.style.backgroundColor = 'white'; // Set white background
+                        option.style.color = 'black'; // Set text color
+                        selectEmployeeNameForAttendance.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching employee names:', error));
+        });
+    </script>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const netWeightInput = document.getElementById('netweight');
+            const ppBoxCountInput = document.getElementById('ppboxcount');
+            const productIdInput = document.getElementById('productid');
+            const productNameInput = document.getElementById('productname');
+            const userNameInput = document.getElementById('username');
+            const userTypeInput = document.getElementById('usertype');
+            const vehicleNameInput = document.getElementById('vehicleName');
+            const vehicleNumberInput = document.getElementById('vehicleNumber');
+            const driverNameInput = document.getElementById('driverName');
+
+
+            function validateNumberInput(input, maxLength) {
+                const numericValue = input.value.replace(/\D/g, '');
+                const truncatedValue = numericValue.slice(0, maxLength);
+                input.value = truncatedValue;
+
+                const errorElement = document.getElementById(`${input.id}Error`);
+                if (errorElement) {
+                    if (numericValue.length > maxLength) {
+                        errorElement.textContent = `Maximum ${maxLength} digits allowed.`;
+                        input.setCustomValidity(`Maximum ${maxLength} digits allowed.`);
+                    } else {
+                        errorElement.textContent = '';
+                        input.setCustomValidity('');
+                    }
+                } else {
+                    console.error(`Error element not found for ${input.id}`);
+                }
+            }
+
+            function validateStringInput(input, maxLength) {
+                const alphanumericValue = input.value.replace(/[^a-zA-Z0-9]/g, '');
+                const truncatedValue = alphanumericValue.slice(0, maxLength);
+                input.value = truncatedValue;
+
+                const errorElement = document.getElementById(`${input.id}Error`);
+                if (errorElement) {
+                    if (alphanumericValue.length > maxLength) {
+                        errorElement.textContent = `Maximum ${maxLength} characters allowed (letters and numbers only).`;
+                        input.setCustomValidity(`Maximum ${maxLength} characters allowed (letters and numbers only).`);
+                    } else {
+                        errorElement.textContent = '';
+                        input.setCustomValidity('');
+                    }
+                } else {
+                    console.error(`Error element not found for ${input.id}`);
+                }
+            }
+
+
+            function validateVehicleInput(input, maxLength) {
+                const alphanumericValue = input.value.replace(/[^A-Z0-9]/g, '');
+                const truncatedValue = alphanumericValue.slice(0, maxLength);
+                input.value = truncatedValue;
+
+                const errorElement = document.getElementById(`${input.id}Error`);
+                if (errorElement) {
+                    if (alphanumericValue.length > maxLength) {
+                        errorElement.textContent = `Maximum ${maxLength} characters allowed (letters and numbers only).`;
+                        input.setCustomValidity(`Maximum ${maxLength} characters allowed (letters and numbers only).`);
+                    } else {
+                        errorElement.textContent = '';
+                        input.setCustomValidity('');
+                    }
+                } else {
+                    console.error(`Error element not found for ${input.id}`);
+                }
+            }
+
+
+            function validateAlphabetsWithSpaceInput(input, maxLength) {
+                const alphabeticValue = input.value.replace(/[^a-zA-Z\s]/g, ''); // Include \s for space
+                const truncatedValue = alphabeticValue.slice(0, maxLength);
+                input.value = truncatedValue;
+
+                const errorElement = document.getElementById(`${input.id}Error`);
+                if (errorElement) {
+                    if (alphabeticValue.length > maxLength) {
+                        errorElement.textContent = `Maximum ${maxLength} characters allowed (letters and spaces only).`;
+                        input.setCustomValidity(`Maximum ${maxLength} characters allowed (letters and spaces only).`);
+                    } else {
+                        errorElement.textContent = '';
+                        input.setCustomValidity('');
+                    }
+                } else {
+                    console.error(`Error element not found for ${input.id}`);
+                }
+            }
+
+
+            netWeightInput.addEventListener('input', function () {
+                validateNumberInput(netWeightInput, 18);
+            });
+
+            ppBoxCountInput.addEventListener('input', function () {
+                validateNumberInput(ppBoxCountInput, 4);
+            });
+
+            productIdInput.addEventListener('input', function () {
+                validateStringInput(productIdInput, 8); 33
+            });
+
+            productNameInput.addEventListener('input', function () {
+                validateAlphabetsWithSpaceInput(productNameInput, 20);
+            });
+
+            userTypeInput.addEventListener('input', function () {
+                validateAlphabetsWithSpaceInput(userTypeInput, 20);
+            });
+
+            userNameInput.addEventListener('input', function () {
+                validateStringInput(userNameInput, 20);
+            });
+
+            vehicleNameInput.addEventListener('input', function () {
+                validateAlphabetsWithSpaceInput(vehicleNameInput, 15);
+            });
+
+            vehicleNumberInput.addEventListener('input', function () {
+                validateVehicleInput(vehicleNumberInput, 20);
+            });
+
+            driverNameInput.addEventListener('input', function () {
+                validateAlphabetsWithSpaceInput(driverNameInput, 20);
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

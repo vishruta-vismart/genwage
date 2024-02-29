@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>ViSmart Factory</title>
+
+    
+    <script src="script.js"></script>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet"> 
+    
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+       .validation-failed {
+        border: 2px solid red !important;
+    }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+
+            filter: invert(100%);
+        }
+        
+/* Style for the popup form */
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  outline: 3px solid white; /*   Add this line to set the border color to white */
+  border-radius: 2%;
+}
+
+.popupProduct {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  outline: 3px solid white;
+  border-radius: 2%;
+}
+
+/* Style to close button */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#closeUserFormButton {
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px; /* Adjust the width and height to make it circular */
+  height: 40px;
+  font-size: 24px;
+  cursor: pointer;
+  margin-top: 1%;
+  margin-right: 3%;
+}
+
+#closeUserFormButton:hover {
+  background-color: darkred;
+}
+
+#closeProductFormButton {
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px; /* Adjust the width and height to make it circular */
+  height: 40px;
+  font-size: 24px;
+  cursor: pointer;
+  margin-top: 1%;
+  margin-right: 3%;
+}
+
+#closeProductFormButton:hover {
+  background-color: darkred;
+}
+
+#closeVehicleFormButton {
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px; /* Adjust the width and height to make it circular */
+  height: 40px;
+  font-size: 24px;
+  cursor: pointer;
+  margin-top: 1%;
+  margin-right: 3%;
+}
+
+#closeVehicleFormButton:hover {
+  background-color: darkred;
+}
+
+.main-sidebar {
+        padding-left: 20px; /* Adjust the indentation as needed */
+    }
+
+    .sub-sidebar {
+        padding-left: 20px; /* Adjust the indentation as needed */
+        background-color: #f8f9fa; /* Add background color for sub-sidebar */
+    }
+
+    
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid position-relative d-flex p-0">
+
+        <!-- Sidebar Start -->
+       <div class="sidebar  bg-white">
+        <nav class="navbar bg-white">
+            <a class="navbar-brand mx-4 mb-3 ">
+                <h4 class="text-primary">Vishruta Enterprises</h4>
+            </a>
+            
+            <div class="navbar-nav w-100">
+                <a href="Employeedetails.html" class="nav-item nav-link" id="dashboardLink">
+                    <i class="fa fa-chart-bar me-2"></i>Master
+                </a>
+                <div>
+                    <a href="#" class="nav-item nav-link active" id="salesOrderLink">
+                        <i class="fa fa-th me-2"></i>Salary Wages
+                    </a>
+                    <div class="sub-sidebar">
+                        <a href="workmenstatutory.html" class="nav-item nav-link sub-link" id="workmanStatutoryLink">
+                            <i class="fa fa-th me-2"></i>Workmen Statutory
+                        </a>
+                        <a href="workmenreference.html" class="nav-item nav-link sub-link" id="workmanReferenceLink">
+                            <i class="fa fa-th me-2"></i> Workmen Reference
+                        </a>
+                        <a href="staff.html" class="nav-item nav-link sub-link" id="staffLink">
+                            <i class="fa fa-th me-2"></i> Staff
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <nav class="navbar navbar-expand bg-white navbar-dark sticky-top px-4 py-0">
+                <a class="navbar-brand d-flex d-lg-none me-4">
+                    <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
+                </a>
+                <a href="#" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-bars"></i>
+                </a>
+                
+            </nav>
+                
+            
+            <!-- Navbar End -->
+
+            <!-- Content Start here -->
+
+           
+                </div>
+            </div>
+            <!-- Table End -->
+
+    
+        <!-- Content End -->
+
+        <!-- Back toSSSS Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+            
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/chart/chart.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+
+    <!--In transit report-->
+
+    <script>
+        $(document).ready(function(){
+            $('input[name="uanOption"]').change(function(){
+                if($(this).val() === 'uanAvailable'){
+                    $('#uanInputField').show();
+                    $('#uanNotAvailableFields').hide();
+                } else {
+                    $('#uanInputField').hide();
+                    $('#uanNotAvailableFields').show();
+                }
+            });
+        });
+    </script>
+    
+
+    <script>
+        function openUserForm() {
+          document.getElementById('userPopupForm').style.display = 'block';
+          // Disable other buttons
+      //document.getElementById("userformopenbutton").disabled = true;
+      document.getElementById("vehicleformopenbutton").disabled = true;
+      document.getElementById("productformopenbutton").disabled = true;
+          
+        }
+        </script>
+        
+        <script>
+            // Close the popup form when the close button is clicked
+            document.getElementById("closeUserFormButton").addEventListener("click", function() {
+
+                location.reload(true);
+                //var userForm = document.getElementById("userPopupForm");
+
+        
+                // Clear the values of form fields
+               // userForm.querySelector('#usertype').value = '';
+                //userForm.querySelector('#username').value = '';
+               // userForm.querySelector('#password').value = '';
+
+                                // enable other buttons
+      //document.getElementById("userformopenbutton").disabled = false;
+     // document.getElementById("productformopenbutton").disabled = false;
+     // document.getElementById("vehicleformopenbutton").disabled = false;
+        
+                // Hide the popup form
+                //userForm.style.display = "none";
+            });
+        </script>
+
+<script>
+    function clearUserForm() {
+        // Clear the values of form fields
+        document.getElementById('usertype').value = '';
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+
+        // Clear the validation state
+        var form = document.querySelector('.needs-validation');
+        form.classList.remove('was-validated');
+
+        // Clear error messages
+        var errorContainers = form.querySelectorAll('.invalid-feedback');
+        errorContainers.forEach(function (container) {
+            container.innerHTML = '';
+        });
+
+        // Clear success message container
+        var successContainer = document.getElementById('successUserContainer');
+        successContainer.innerHTML = '';
+
+        // Clear error message container
+        var errorContainer = document.getElementById('errorUserContainer');
+        errorContainer.innerHTML = '';
+
+        // Reset the form's validation state using Bootstrap's native validation
+        form.removeAttribute('novalidate');
+    }
+</script>
+
+
+
+
+
+<script>
+    function openProductForm() {
+      document.getElementById('productPopupForm').style.display = 'block';
+      // Disable other buttons
+      document.getElementById("userformopenbutton").disabled = true;
+        document.getElementById("vehicleformopenbutton").disabled = true;
+
+
+    }
+    </script>
+    
+    <script>
+        // Close the popup form when the close button is clicked
+        document.getElementById("closeProductFormButton").addEventListener("click", function() {
+            location.reload(true);
+            //var productForm = document.getElementById("productPopupForm");
+    
+            // Clear the values of form fields
+           // productForm.querySelector('#productid').value = '';
+           // productForm.querySelector('#productname').value = '';
+          //  productForm.querySelector('#netweight').value = '';
+          //  productForm.querySelector('#ppboxcount').value = '';
+
+            // enable other buttons
+     // document.getElementById("userformopenbutton").disabled = false;
+     //   document.getElementById("vehicleformopenbutton").disabled = false;
+    
+            // Hide the popup form
+         //   productForm.style.display = "none";
+        });
+    </script>
+
+
+<script>
+    function clearProductForm() {
+        // Clear the values of form fields
+        document.getElementById('productid').value = '';
+        document.getElementById('productname').value = '';
+        document.getElementById('netweight').value = '';
+        document.getElementById('ppboxcount').value = '';
+
+        // Clear the validation state
+        var form = document.querySelector('.validation-product');
+        if (form) {
+            form.classList.remove('was-validated');
+
+            // Clear error messages for each input field
+            var errorContainers = form.querySelectorAll('.invalid-feedback');
+            errorContainers.forEach(function (container) {
+                container.innerHTML = '';
+            });
+        }
+
+        // Clear success message container
+        var successContainer = document.getElementById('successProductContainer');
+        if (successContainer) {
+            successContainer.innerHTML = '';
+        }
+
+        // Clear global error message container
+        var errorContainer = document.getElementById('errorProductContainer');
+        if (errorContainer) {
+            errorContainer.innerHTML = '';
+        }
+
+        // Reset the form's validation state using Bootstrap's native validation
+        if (form) {
+            form.removeAttribute('novalidate');
+        }
+    }
+</script>
+
+
+
+
+
+<script>
+    function openVehicleForm() {
+      document.getElementById('vehiclePopupForm').style.display = 'block';
+      // Disable other buttons
+      document.getElementById("userformopenbutton").disabled = true;
+        document.getElementById("productformopenbutton").disabled = true;
+    }
+    </script>
+    
+    
+    <script>
+        function clearVehicleForm() {
+            // Clear the values of form fields
+            document.getElementById('vehicleName').value = '';
+            document.getElementById('vehicleNumber').value = '';
+            document.getElementById('driverName').value = '';
+    
+            // Clear the validation state
+            var form = document.querySelector('.validation-vehicle');
+            if (form) {
+                form.classList.remove('was-validated');
+    
+                // Clear error messages for each input field
+                var errorContainers = form.querySelectorAll('.invalid-feedback');
+                errorContainers.forEach(function (container) {
+                    container.innerHTML = '';
+                });
+            }
+    
+            // Clear success message container
+            var successContainer = document.getElementById('successVehicleContainer');
+            if (successContainer) {
+                successContainer.innerHTML = '';
+            }
+    
+            // Clear global error message container
+            var errorContainer = document.getElementById('errorVehicleContainer');
+            if (errorContainer) {
+                errorContainer.innerHTML = '';
+            }
+
+            clearQRCode();
+    
+            // Reset the form's validation state using Bootstrap's native validation
+            if (form) {
+                form.removeAttribute('novalidate');
+            }
+        }
+    </script>
+    
+
+<script>
+    // Close the popup form when the close button is clicked
+document.getElementById("closeVehicleFormButton").addEventListener("click", function() {
+    location.reload(true);
+    //var vehicleForm = document.getElementById("vehiclePopupForm");
+
+    // Clear the values of form fields
+   // vehicleForm.querySelector('#vehicleName').value = '';
+   // vehicleForm.querySelector('#vehicleNumber').value = '';
+   // vehicleForm.querySelector('#driverName').value = '';
+    
+    // enable other buttons
+   // document.getElementById("userformopenbutton").disabled = false;
+   // document.getElementById("productformopenbutton").disabled = false;
+
+    // Hide the popup form
+   // vehicleForm.style.display = "none";
+});
+
+</script>
+
+
+
+<script>
+    async function postUser() {
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        var usertype = document.getElementById('usertype').value;
+
+        if (username === '' || password === '' || usertype === '') {
+            // Handle the case where some fields are empty
+            //alert('Please fill in all the fields.');
+        } else {
+            var requestData = {
+                username: username,
+                password: password,
+                usertype: usertype
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (response.ok) {
+                    showSuccessUserMessage();
+                    clearErrorUser(); // Clear error message immediately
+                } else {
+                    const errorData = await response.json();
+                    console.error('Error:', errorData.message);
+                    showErrorUserMessage(`Failed to store user data. ${errorData.message}`);
+                    clearSuccessUser(); // Clear success message immediately
+                    setTimeout(() => {
+                        clearUserMessages(); // Clear both error and success messages after 30 seconds
+                        // closeForm(); // Close form after 30 seconds
+                    }, 30000);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Handle other error cases
+            }
+        }
+    }
+
+    function showSuccessUserMessage() {
+        var successMessage = document.createElement('div');
+        successMessage.className = 'text-success';
+        successMessage.innerHTML = 'User data stored successfully';
+
+        // Get the success message container
+        var successContainer = document.getElementById('successUserContainer');
+
+        // Clear any existing content in the container
+        successContainer.innerHTML = '';
+
+        // Append the success message to the container
+        successContainer.appendChild(successMessage);
+    }
+
+    function showErrorUserMessage(message) {
+        var errorMessage = document.createElement('div');
+        errorMessage.className = 'text-danger';
+        errorMessage.innerHTML = message;
+
+        // Get the error message container
+        var errorContainer = document.getElementById('errorUserContainer');
+
+        // Clear any existing content in the container
+        errorContainer.innerHTML = '';
+
+        // Append the error message to the container
+        errorContainer.appendChild(errorMessage);
+    }
+
+    function clearUserMessages() {
+        // Clear both error and success messages
+        document.getElementById('errorUserContainer').innerHTML = '';
+        document.getElementById('successUserContainer').innerHTML = '';
+    }
+
+    function clearSuccessUser() {
+        // Clear only the success message
+        document.getElementById('successUserContainer').innerHTML = '';
+    }
+
+    function clearErrorUser() {
+        // Clear only the error message
+        document.getElementById('errorUserContainer').innerHTML = '';
+    }
+
+</script>
+
+
+<script>
+    async function postProduct() {
+        var productid = document.getElementById('productid').value;
+        var productname = document.getElementById('productname').value;
+        var netweight = document.getElementById('netweight').value;
+        var ppboxcount = document.getElementById('ppboxcount').value;
+
+        if (productid === '' || productname === '' || netweight === '' || ppboxcount === '') {
+            // Handle the case where some fields are empty
+            // alert('Please fill in all the fields.');
+        } else {
+            var requestData = {
+                productid: productid,
+                productname: productname,
+                netweight: netweight,
+                ppboxcount: ppboxcount
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (response.ok) {
+                    showSuccessProductMessage();
+                    clearErrorProduct(); // Clear error message immediately
+                } else {
+                    const errorData = await response.json();
+                    console.error('Error:', errorData.message);
+                    showErrorProductMessage(`Failed to store product data. ${errorData.message}`);
+                    clearSuccessProduct(); // Clear success message immediately
+                    setTimeout(() => {
+                        clearProductMessages(); // Clear both error and success messages after 30 seconds
+                        // closeForm(); // Close form after 30 seconds
+                    }, 30000);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Handle other error cases
+            }
+        }
+    }
+
+    function showSuccessProductMessage() {
+        var successMessage = document.createElement('div');
+        successMessage.className = 'text-success';
+        successMessage.innerHTML = 'Product data stored successfully';
+
+        // Get the success message container
+        var successContainer = document.getElementById('successProductContainer');
+
+        // Clear any existing content in the container
+        successContainer.innerHTML = '';
+
+        // Append the success message to the container
+        successContainer.appendChild(successMessage);
+    }
+
+    function showErrorProductMessage(message) {
+        var errorMessage = document.createElement('div');
+        errorMessage.className = 'text-danger';
+        errorMessage.innerHTML = message;
+
+        // Get the error message container
+        var errorContainer = document.getElementById('errorProductContainer');
+
+        // Clear any existing content in the container
+        errorContainer.innerHTML = '';
+
+        // Append the error message to the container
+        errorContainer.appendChild(errorMessage);
+    }
+
+    function clearProductMessages() {
+        // Clear both error and success messages
+        document.getElementById('errorProductContainer').innerHTML = '';
+        document.getElementById('successProductContainer').innerHTML = '';
+    }
+
+    function clearSuccessProduct() {
+        // Clear only the success message
+        document.getElementById('successProductContainer').innerHTML = '';
+    }
+
+    function clearErrorProduct() {
+        // Clear only the error message
+        document.getElementById('errorProductContainer').innerHTML = '';
+    }
+</script>
+
+
+<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+
+<script>
+    async function postVehicle() {
+   // console.log('postVehicle called'); // Log before the fetch request
+
+    var vehicleName = document.getElementById('vehicleName').value;
+    var vehicleNumber = document.getElementById('vehicleNumber').value;
+    var driverName = document.getElementById('driverName').value;
+
+    if (vehicleName === '' || vehicleNumber === '' || driverName === '') {
+        // Handle the case where some fields are empty
+        console.log('One or more fields are empty. Aborting postVehicle.');
+        return; // Abort the function if any field is empty
+    }
+
+    var requestData = {
+    vehicle_name: vehicleName,
+    vehicle_no: 'VS' + vehicleNumber, // Add 'VS' at the beginning of the vehicle number
+    driver_name: driverName
+    };
+
+    try {
+       // console.log('Before fetch'); // Add this log
+        const response = await fetch('http://localhost:3000/api/vehicledata', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+            },
+            body: JSON.stringify(requestData)
+        });
+
+      //  console.log('After fetch'); // Add this log
+
+        if (response.ok) {
+            showSuccessVehicleMessage();
+            clearErrorVehicle(); // Clear error message immediately
+
+            generateQRCode('VS' + vehicleNumber); // Add 'VS' at the beginning of the vehicle number
+        } else {
+            const errorData = await response.json();
+            console.error('Error:', errorData.message);
+            showErrorVehicleMessage(`Failed to store vehicle data. ${errorData.message}`);
+            clearSuccessVehicle(); // Clear success message immediately
+            // Clear the QR code container
+           clearQRCode();
+            setTimeout(() => {
+                clearVehicleMessages(); // Clear both error and success messages after 30 seconds
+                // closeForm(); // Close form after 30 seconds
+            }, 30000);
+        }
+    } catch (error) {
+        console.error('Error during postVehicle:', error);
+        // Handle other error cases
+    }
+}
+
+    function showSuccessVehicleMessage() {
+        var successMessage = document.getElementById('successVehicleContainer');
+        successMessage.innerHTML = 'Vehicle data stored successfully';
+    }
+
+    function showErrorVehicleMessage(message) {
+        var errorMessage = document.getElementById('errorVehicleContainer');
+        errorMessage.innerHTML = message;
+    }
+
+    function clearVehicleMessages() {
+        var errorContainer = document.getElementById('errorVehicleContainer');
+        var successContainer = document.getElementById('successVehicleContainer');
+        
+        // Clear both error and success messages
+        errorContainer.innerHTML = '';
+        successContainer.innerHTML = '';
+        clearQRCode();
+    }
+
+    function clearSuccessVehicle() {
+        var successContainer = document.getElementById('successVehicleContainer');
+        
+        // Clear only the success message
+        successContainer.innerHTML = '';
+    }
+
+    function clearErrorVehicle() {
+        var errorContainer = document.getElementById('errorVehicleContainer');
+        
+        // Clear only the error message
+        errorContainer.innerHTML = '';
+    }
+
+    function generateQRCode(vehicleNumber) {
+    var qrCodeContainer = document.getElementById('qrCodeContainer');
+    
+    // Clear existing QR code
+    qrCodeContainer.innerHTML = '';
+
+    // Create a new QR code with the alt attribute set to the vehicle number
+    var qr = new QRCode(qrCodeContainer, {
+        text: vehicleNumber,
+        width: 128,
+        height: 128
+    });
+
+    // Set the alt attribute of the generated image
+    var qrImage = qrCodeContainer.querySelector('img');
+    if (qrImage) {
+        qrImage.alt = vehicleNumber;
+    }
+}
+
+
+    function clearQRCode() {
+    var qrCodeContainer = document.getElementById('qrCodeContainer');
+    
+    // Clear the QR code container
+    qrCodeContainer.innerHTML = '';
+}
+
+    
+</script>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+
+<script>
+function downloadQR() {
+    var qrCodeContainer = document.getElementById('qrCodeContainer');
+
+    // Check if html2canvas is available
+    if (typeof html2canvas !== 'undefined') {
+        // Use html2canvas to capture the container as an image
+        html2canvas(qrCodeContainer).then(function (canvas) {
+            // Convert the canvas to a data URL
+            var imageDataURL = canvas.toDataURL('image/png');
+
+            // Create a download link
+            var link = document.createElement('a');
+            link.href = imageDataURL;
+            
+            // Extract vehicleNumber from the alt attribute
+            var vehicleNumber = qrCodeContainer.querySelector('img').getAttribute('alt');
+            
+            // Set the file name with vehicleNumber
+            link.download = 'vehicleQR_' + (vehicleNumber || 'Unknown') + '.png';
+
+            // Trigger the download
+            link.click();
+        }).catch(function (error) {
+            console.error('Error capturing QR code as image:', error);
+            alert('There is No QR Code to Print');
+        });
+    } else {
+        console.error('html2canvas library is not available.');
+        //alert('Error: html2canvas library is not available.');
+    }
+}
+</script>
+
+
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+        'use strict';
+    
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation');
+    
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    console.log('Form submitted'); // Debugging statement
+    
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    } else {
+                        // Prevent default behavior for valid forms as well
+                        event.preventDefault();
+                    }
+    
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+    </script>
+
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+        'use strict';
+    
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.validation-product');
+    
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    console.log('Form submitted'); // Debugging statement
+    
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    } else {
+                        // Prevent default behavior for valid forms as well
+                        event.preventDefault();
+                    }
+    
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+    </script>
+
+<script>
+   (function () {
+    'use strict';
+
+    var form = document.querySelector('.validation-vehicle');
+
+    form.addEventListener('submit', async function (event) {
+        console.log('Submit button clicked'); // Add this log
+
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            
+        } else {
+            event.preventDefault();
+           // await postVehicle();
+        }
+
+        form.classList.add('was-validated');
+    }, false);
+})();
+
+</script>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const netWeightInput = document.getElementById('netweight');
+    const ppBoxCountInput = document.getElementById('ppboxcount');
+    const productIdInput = document.getElementById('productid');
+    const productNameInput = document.getElementById('productname');
+    const userNameInput = document.getElementById('username');
+    const userTypeInput = document.getElementById('usertype');
+    const vehicleNameInput = document.getElementById('vehicleName');
+    const vehicleNumberInput = document.getElementById('vehicleNumber');
+    const driverNameInput = document.getElementById('driverName');
+    
+
+    function validateNumberInput(input, maxLength) {
+        const numericValue = input.value.replace(/\D/g, '');
+        const truncatedValue = numericValue.slice(0, maxLength);
+        input.value = truncatedValue;
+
+        const errorElement = document.getElementById(`${input.id}Error`);
+        if (errorElement) {
+            if (numericValue.length > maxLength) {
+                errorElement.textContent = `Maximum ${maxLength} digits allowed.`;
+                input.setCustomValidity(`Maximum ${maxLength} digits allowed.`);
+            } else {
+                errorElement.textContent = '';
+                input.setCustomValidity('');
+            }
+        } else {
+            console.error(`Error element not found for ${input.id}`);
+        }
+    }
+
+    function validateStringInput(input, maxLength) {
+        const alphanumericValue = input.value.replace(/[^a-zA-Z0-9]/g, '');
+        const truncatedValue = alphanumericValue.slice(0, maxLength);
+        input.value = truncatedValue;
+
+        const errorElement = document.getElementById(`${input.id}Error`);
+        if (errorElement) {
+            if (alphanumericValue.length > maxLength) {
+                errorElement.textContent = `Maximum ${maxLength} characters allowed (letters and numbers only).`;
+                input.setCustomValidity(`Maximum ${maxLength} characters allowed (letters and numbers only).`);
+            } else {
+                errorElement.textContent = '';
+                input.setCustomValidity('');
+            }
+        } else {
+            console.error(`Error element not found for ${input.id}`);
+        }
+    }
+
+   
+    function validateVehicleInput(input, maxLength) {
+        const alphanumericValue = input.value.replace(/[^A-Z0-9]/g, '');
+        const truncatedValue = alphanumericValue.slice(0, maxLength);
+        input.value = truncatedValue;
+
+        const errorElement = document.getElementById(`${input.id}Error`);
+        if (errorElement) {
+            if (alphanumericValue.length > maxLength) {
+                errorElement.textContent = `Maximum ${maxLength} characters allowed (letters and numbers only).`;
+                input.setCustomValidity(`Maximum ${maxLength} characters allowed (letters and numbers only).`);
+            } else {
+                errorElement.textContent = '';
+                input.setCustomValidity('');
+            }
+        } else {
+            console.error(`Error element not found for ${input.id}`);
+        }
+    }
+
+
+    function validateAlphabetsWithSpaceInput(input, maxLength) {
+    const alphabeticValue = input.value.replace(/[^a-zA-Z\s]/g, ''); // Include \s for space
+    const truncatedValue = alphabeticValue.slice(0, maxLength);
+    input.value = truncatedValue;
+
+    const errorElement = document.getElementById(`${input.id}Error`);
+    if (errorElement) {
+        if (alphabeticValue.length > maxLength) {
+            errorElement.textContent = `Maximum ${maxLength} characters allowed (letters and spaces only).`;
+            input.setCustomValidity(`Maximum ${maxLength} characters allowed (letters and spaces only).`);
+        } else {
+            errorElement.textContent = '';
+            input.setCustomValidity('');
+        }
+    } else {
+        console.error(`Error element not found for ${input.id}`);
+    }
+}
+
+
+    netWeightInput.addEventListener('input', function () {
+        validateNumberInput(netWeightInput, 18);
+    });
+
+    ppBoxCountInput.addEventListener('input', function () {
+        validateNumberInput(ppBoxCountInput, 4);
+    });
+
+    productIdInput.addEventListener('input', function () {
+        validateStringInput(productIdInput, 8);33                                                                                                                                                                                                         
+    });
+
+    productNameInput.addEventListener('input', function () {
+        validateAlphabetsWithSpaceInput(productNameInput, 20);
+    });
+
+    userTypeInput.addEventListener('input', function () {
+        validateAlphabetsWithSpaceInput(userTypeInput, 20);
+    });
+
+    userNameInput.addEventListener('input', function () {
+        validateStringInput(userNameInput, 20);
+    });
+
+    vehicleNameInput.addEventListener('input', function () {
+        validateAlphabetsWithSpaceInput(vehicleNameInput, 15);
+    });
+
+    vehicleNumberInput.addEventListener('input', function () {
+        validateVehicleInput(vehicleNumberInput, 20);
+    });
+
+    driverNameInput.addEventListener('input', function () {
+        validateAlphabetsWithSpaceInput(driverNameInput, 20);
+    });
+});
+
+</script>
+
+</body>
+
+</html>

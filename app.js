@@ -119,7 +119,9 @@ app.post('/employeefixedwage', async (req, res) => {
             fixed_food_allowance,
             fixed_site_allowance,
             fixed_gross_total,
+            ot_price_per_hr
         } = req.body;
+
 
         // Check if the employee already exists
         const checkQuery = 'SELECT COUNT(*) FROM employeefixedwage WHERE employeename = $1';
@@ -140,10 +142,22 @@ app.post('/employeefixedwage', async (req, res) => {
                 fixed_hra,
                 fixed_food_allowance,
                 fixed_site_allowance,
-                fixed_gross_total,
+                fixed_gross_total
             ];
 
             await client.query(query, values);
+
+            const getcontype = `SELECT c.contractor_type FROM contractor c
+            JOIN employee e ON c.name = e.contractor_name
+            WHERE e.name = $1`;
+
+            const getcontyperesult = await client.query(getcontype, [employeename]);
+
+
+            if (getcontyperesult.rows[0].contractor_type == 'VENDOR') {
+                const otquery = `INSERT INTO vendorotwage(employee_name, ot_price_per_hr) VALUES ($1, $2)`;
+                await client.query(otquery, [employeename, ot_price_per_hr]);
+            }
 
             res.status(201).json({ message: 'Fixed wage record created successfully' });
         } else {
@@ -161,19 +175,31 @@ app.post('/employeefixedwage', async (req, res) => {
 app.post('/noofdaysinmonth', async (req, res) => {
     try {
         const { contractor_type, month, year, noofdaysinmonth } = req.body;
-        const monthyear = `${month}${year}`;        
-      // Insert data into the noofdaysinmonth table
-      const query = 'INSERT INTO noofdaysinmonth (contractor_type, monthyear, noofdaysinmonth) VALUES ($1, $2, $3)';
-      const values = [contractor_type, monthyear, noofdaysinmonth];
-      await client.query(query, values);
-  
-      res.status(201).send('Details stored successfully');
+        const monthyear = `${month}${year}`;
+
+        // Check if the record already exists
+        const checkQuery = 'SELECT * FROM noofdaysinmonth WHERE contractor_type = $1 AND monthyear = $2';
+        const checkValues = [contractor_type, monthyear];
+        const { rowCount } = await client.query(checkQuery, checkValues);
+
+        // If the record already exists, send a proper message
+        if (rowCount > 0) {
+            return res.status(400).send('Data already exists for the specified contractor type and month/year.');
+        }
+
+        // Insert data into the noofdaysinmonth table
+        const insertQuery = 'INSERT INTO noofdaysinmonth (contractor_type, monthyear, noofdaysinmonth) VALUES ($1, $2, $3)';
+        const insertValues = [contractor_type, monthyear, noofdaysinmonth];
+        await client.query(insertQuery, insertValues);
+
+        res.status(201).send('Details stored successfully');
     } catch (error) {
-      console.error('Error storing details:', error);
-      res.status(500).send('Internal Server Error');
+        console.error('Error storing details:', error);
+        res.status(500).send('Internal Server Error');
     }
-  });
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -199,7 +225,7 @@ app.post('/dailyattendance', async (req, res) => {
          SELECT * FROM dailyattendance
          WHERE employeename = $1 AND in_date = $2
      `;
-        const checkAttendanceValues = [employeename, date];
+        const checkAttendanceValues = [employeename, in_date];
         const attendanceResult = await client.query(checkAttendanceQuery, checkAttendanceValues);
 
         if (attendanceResult.rows.length > 0) {
@@ -225,31 +251,36 @@ app.post('/dailyattendance', async (req, res) => {
 
             console.log('Total working hours:', workingHours);
 
-            // Fetch the contractor name for the employee from the employee table
-            const getconstractorname = `SELECT contractor_name FROM employee WHERE name = $1`;
-            const getconstractornameresult = await client.query(getconstractorname, [employeename]);
+
+
+            // // Fetch the contractor name for the employee from the employee table
+            // const getconstractorname = `SELECT contractor_name FROM employee WHERE name = $1`;
+            // const getconstractornameresult = await client.query(getconstractorname, [employeename]);
 
             // Fetch the working hours, weekday OT type, and Sunday/holiday OT type from the contractor table
-            const getottypeworkinghours = `SELECT workinghoursperday FROM contractor WHERE name = $1`;
-            const getottypeworkinghoursresult = await client.query(getottypeworkinghours, [getconstractornameresult.rows[0].contractor_name]);
+            const getottypeworkinghours = `SELECT c.contractor_type, c.workinghoursperday FROM contractor c
+            JOIN employee e ON c.name = e.contractor_name
+            WHERE e.name = $1`;
+
+            const getottypeworkinghoursresult = await client.query(getottypeworkinghours, [employeename]);
             //console.log("getottypeworkinghoursresult",getottypeworkinghoursresult);
 
             // Extract the required data from the query results
             const workinghoursperday = getottypeworkinghoursresult.rows[0].workinghoursperday;
+
             console.log("workinghoursperday", workinghoursperday);
             //const workinghoursperdayresult = await client.query(getWorkingHoursQuery, [employeename]);
 
+
             let weekdaytodayOT = 0;
             let sunday_holiday_ot = 0;
-            let noofDaysinmonth = 26;
+            // let noofDaysinmonth = 26;
             let noOfPresentDays = 0;
             let national_festival_holiday = 0;
             let todayot = 0;
             let nagativeot = 0;
 
-            if (day == 'national festival holiday') {
-                national_festival_holiday = 1;
-            } else if (day.toLowerCase() === 'sunday') {
+            if (day === 'sunday') {
                 sunday_holiday_ot = workingHours - ot_time_break;
                 todayot = sunday_holiday_ot;
             } else {
@@ -308,45 +339,107 @@ app.post('/dailyattendance', async (req, res) => {
             const monthyear = month.toString() + year.toString();
 
             console.log("check existing working data", employeename);
+            await calculateworkingdata(employeename, monthyear, noOfPresentDays, national_festival_holiday, weekdaytodayOT, salary_advance, sunday_holiday_ot, nagativeot, other_deduction, fines_damages_loss, res);
+            console.log("test working data back");
 
-            // Check if the employee record exists for the given month
-            const employeeQuery = `
+            const getottypeworkinghours1 = `SELECT c.contractor_type, c.workinghoursperday FROM contractor c
+            JOIN employee e ON c.name = e.contractor_name
+            WHERE e.name = $1`;
+
+            const getottypeworkinghoursresult1 = await client.query(getottypeworkinghours1, [employeename]);
+            const contractor_type1 = getottypeworkinghoursresult1.rows[0].contractor_type;
+
+            if (contractor_type1 == 'VENDOR') {
+                //console.log("before fuction call");
+                await calculatevendorwage(employeename, monthyear, res);
+                //console.log("after function call");
+            } else {
+                await calculateEmployeeWage(employeename, monthyear, res);
+                await calculateEmployeeWagestatutory(employeename, monthyear, res);
+            }
+            //console.log("data success");
+            res.status(201).send('Daily attendance details inserted successfully');
+            console.log(employeename);
+
+            //console.log(res);
+
+        }
+    } catch (error) {
+        console.error('Error inserting daily attendance details:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////// function calling /////////////////////////////////////////////////////////////////////
+async function calculateworkingdata(employeeName, MonthYear, NoOfPresentDays, National_festival_holiday, WeekdaytodayOT, Salary_advance, Sunday_holiday_ot, Nagativeot, Other_deduction, Fines_damages_loss, res) {
+    try {
+        const employeename = employeeName;
+        const monthyear = MonthYear;
+        let noOfPresentDays = NoOfPresentDays;
+        let national_festival_holiday = National_festival_holiday;
+        let weekdaytodayOT = WeekdaytodayOT;
+        let salary_advance = Salary_advance;
+        let sunday_holiday_ot = Sunday_holiday_ot;
+        let nagativeot = Nagativeot;
+        const other_deduction = Other_deduction;
+        const fines_damages_loss = Fines_damages_loss;
+
+
+        const getnoofdaysinmonth = `SELECT d.noofdaysinmonth 
+            FROM contractor c
+            JOIN employee e ON c.name = e.contractor_name
+            JOIN noofdaysinmonth d ON c.contractor_type = d.contractor_type
+            WHERE e.name = $1`;
+
+        const getnoofdaysinmonthresult = await client.query(getnoofdaysinmonth, [employeename]);
+        let no_of_Days_in_month = getnoofdaysinmonthresult.rows[0].noofdaysinmonth;
+
+
+        // Check if the employee record exists for the given month
+        const employeeQuery = `
                 SELECT employeename 
                 FROM workingdata 
                 WHERE employeename = $1 AND monthyear = $2
             `;
-            const employeeValues = [employeename, monthyear];
-            const employeeResult = await client.query(employeeQuery, employeeValues);
+        const employeeValues = [employeename, monthyear];
+        const employeeResult = await client.query(employeeQuery, employeeValues);
 
-            console.log("before updating working data", employeename);
+        console.log("before updating working data", employeename);
 
-            if (employeeResult.rows.length === 0) {
+        if (employeeResult.rows.length === 0) {
 
-                console.log("inside if working data", employeename);
-                const employeename1 = employeename;
-                // Fetch the fixed gross total for the employee from the employeefixedwage table
-                const getotprice = `SELECT fixed_gross_total FROM employeefixedwage WHERE employeename = $1`;
-                const getotpriceresult = await client.query(getotprice, [employeename]);
+            console.log("inside if working data", employeename);
+            //const employeename1 = employeename;
+            // Fetch the fixed gross total for the employee from the employeefixedwage table
+            const getotprice = `SELECT fixed_gross_total FROM employeefixedwage WHERE employeename = $1`;
+            const getotpriceresult = await client.query(getotprice, [employeename]);
 
-                // Fetch the contractor name for the employee from the employee table
-                const getconstractorname = `SELECT contractor_name FROM employee WHERE name = $1`;
-                const getconstractornameresult = await client.query(getconstractorname, [employeename]);
+            // // Fetch the contractor name for the employee from the employee table
+            // const getconstractorname = `SELECT contractor_name FROM employee WHERE name = $1`;
+            // const getconstractornameresult = await client.query(getconstractorname, [employeename]);
 
-                // Fetch the working hours, weekday OT type, and Sunday/holiday OT type from the contractor table
-                const getottype = `SELECT weekdayottype, sundayorholidayottype FROM contractor WHERE name = $1`;
-                const getottyperesult = await client.query(getottype, [getconstractornameresult.rows[0].contractor_name]);
+            // Fetch the working hours, weekday OT type, and Sunday/holiday OT type from the contractor table
+            const getottype = `SELECT c.contractor_type, c.workinghoursperday, c.weekdayottype, c.sundayorholidayottype
+                FROM contractor c
+                JOIN employee e ON c.name = e.contractor_name
+                WHERE e.name = $1
+                `;
+            const getottyperesult = await client.query(getottype, [employeename]);
 
-                // Extract the required data from the query results
-                const weekdayottype = getottyperesult.rows[0].weekdayottype;
-                const sundayholidayottype = getottyperesult.rows[0].sundayorholidayottype;
+            // Extract the required data from the query results
+            const workinghoursperday = getottyperesult.rows[0].workinghoursperday;
+            const weekdayottype = getottyperesult.rows[0].weekdayottype;
+            const sundayholidayottype = getottyperesult.rows[0].sundayorholidayottype;
+            const contractor_type = getottyperesult.rows[0].contractor_type
+            // Calculate OT prices based on the fetched data
+            const otpriceperhr = customRound((getotpriceresult.rows[0].fixed_gross_total / no_of_Days_in_month ) / workinghoursperday);
 
-                // Calculate OT prices based on the fetched data
-                const otpriceperhr = Math.floor(getotpriceresult.rows[0].fixed_gross_total / noofDaysinmonth / workinghoursperday);
-                const weekdayotpriceperhr = Math.floor(otpriceperhr * weekdayottype);
-                const sundayholidayotpriceperhr = Math.floor(otpriceperhr * sundayholidayottype);
+            const weekdayotpriceperhr = customRound( otpriceperhr * weekdayottype );
+            const sundayholidayotpriceperhr = customRound(otpriceperhr * sundayholidayottype);
 
-                // If no record exists for the employee and month, insert a new record
-                const insertQuery = `
+            // If no record exists for the employee and month, insert a new record
+            const insertQuery = `
                     INSERT INTO workingdata (
                         employeename, 
                         monthyear, 
@@ -363,72 +456,58 @@ app.post('/dailyattendance', async (req, res) => {
                         fines_damages_loss)
                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10, $11, $12,$13)
                 `;
-                const insertValues = [
-                    employeename,
-                    monthyear,
-                    noofDaysinmonth,
-                    noOfPresentDays,
-                    national_festival_holiday,
-                    weekdaytodayOT,
-                    sunday_holiday_ot,
-                    salary_advance,
-                    weekdayotpriceperhr,
-                    sundayholidayotpriceperhr,
-                    nagativeot,
-                    other_deduction,
-                    fines_damages_loss
-                ];
-                await client.query(insertQuery, insertValues);
-                console.log("after inserting working data", employeename);
-            } else {
-                // If a record exists, update the existing record with new values
-                const updateQuery = `
+            const insertValues = [
+                employeename,
+                monthyear,
+                no_of_Days_in_month,
+                noOfPresentDays,
+                national_festival_holiday,
+                weekdaytodayOT,
+                sunday_holiday_ot,
+                salary_advance,
+                weekdayotpriceperhr,
+                sundayholidayotpriceperhr,
+                nagativeot,
+                other_deduction,
+                fines_damages_loss
+            ];
+            await client.query(insertQuery, insertValues);
+            console.log("after inserting working data", employeename);
+        } else {
+            // If a record exists, update the existing record with new values
+            const updateQuery = `
                     UPDATE workingdata
                     SET no_of_present_days = no_of_present_days + $1, 
-                        national_festival_holiday = national_festival_holiday + $2,
-                        weekday_no_of_hours_overtime = weekday_no_of_hours_overtime + $3, 
-                        sunday_holiday_no_of_hours_overtime = sunday_holiday_no_of_hours_overtime + $4,
-                        salary_advance = salary_advance + $5,
-                        nagativeot = nagativeot + $6,
-                        other_deduction = other_deduction + $7,
-                        fines_damages_loss = fines_damages_loss + $8
-                    WHERE employeename = $9 AND monthyear = $10
+                        weekday_no_of_hours_overtime = weekday_no_of_hours_overtime + $2, 
+                        sunday_holiday_no_of_hours_overtime = sunday_holiday_no_of_hours_overtime + $3,
+                        salary_advance = salary_advance + $4,
+                        nagativeot = nagativeot + $5,
+                        other_deduction = other_deduction + $6,
+                        fines_damages_loss = fines_damages_loss + $7
+                    WHERE employeename = $8 AND monthyear = $9
                 `;
-                const updateValues = [
-                    noOfPresentDays,
-                    national_festival_holiday,
-                    weekdaytodayOT,
-                    sunday_holiday_ot,
-                    salary_advance,
-                    nagativeot,
-                    other_deduction,
-                    fines_damages_loss,
-                    employeename,
-                    monthyear
-                ];
-                await client.query(updateQuery, updateValues);
-
-            }
-
-
-
-            await calculateEmployeeWage(employeename, monthyear, res);
-            await calculateEmployeeWagestatutory(employeename, monthyear, res);
-
-            res.status(201).send('Daily attendance details inserted successfully');
-            console.log(employeename);
-
-            //console.log(res);
+            const updateValues = [
+                noOfPresentDays,
+                weekdaytodayOT,
+                sunday_holiday_ot,
+                salary_advance,
+                nagativeot,
+                other_deduction,
+                fines_damages_loss,
+                employeename,
+                monthyear
+            ];
+            await client.query(updateQuery, updateValues);
 
         }
+
     } catch (error) {
-        console.error('Error inserting daily attendance details:', error);
+        console.error('Error inserting working data:', error);
         res.status(500).send('Internal Server Error');
     }
-});
+}// end of employee working data calculations
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////// function calling /////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Workmen Reference Wage register calculations
@@ -460,7 +539,7 @@ async function calculateEmployeeWage(employeeName, MonthYear, res) {
             const no_of_days_in_month = workingdataResult.rows[0].no_of_days_in_month;
             const no_of_present_days = workingdataResult.rows[0].no_of_present_days;
             const national_festival_holiday = workingdataResult.rows[0].national_festival_holiday;
-            const no_of_payable_days = no_of_present_days + national_festival_holiday;
+            const no_of_payable_days = customRound( no_of_present_days + national_festival_holiday );
             console.log("no_of_payable_days", no_of_payable_days);
             const weekday_no_of_hours_overtime = workingdataResult.rows[0].weekday_no_of_hours_overtime;
             const sunday_holiday_no_of_hours_overtime = workingdataResult.rows[0].sunday_holiday_no_of_hours_overtime;
@@ -488,14 +567,14 @@ async function calculateEmployeeWage(employeeName, MonthYear, res) {
             console.log("fixed_gross_total", fixed_gross_total);
 
             //employee earned wage data
-            const earned_basic_da = Math.floor((fixed_basic_da / no_of_days_in_month) * no_of_payable_days);
-            const earned_hra = Math.floor((fixed_hra / no_of_days_in_month) * no_of_payable_days);
-            const earned_food_allowance = Math.floor((fixed_food_allowance / no_of_days_in_month) * no_of_payable_days);
-            const earned_site_allowance = Math.floor((fixed_site_allowance / no_of_days_in_month) * no_of_payable_days);
-            const earned_weekday_ot_wage = Math.floor((weekday_no_of_hours_overtime - nagativeot) * weekday_ot_price_hr);
-            const earned_sunday_holiday_ot_wage = Math.floor(sunday_holiday_no_of_hours_overtime * sunday_holiday_ot_price_hr);
-            const earned_ot_wage = earned_weekday_ot_wage + earned_sunday_holiday_ot_wage;
-            const earned_gross_total = earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage;
+            const earned_basic_da = customRound((fixed_basic_da / no_of_days_in_month) * no_of_payable_days);
+            const earned_hra = customRound((fixed_hra / no_of_days_in_month) * no_of_payable_days);
+            const earned_food_allowance = customRound((fixed_food_allowance / no_of_days_in_month) * no_of_payable_days);
+            const earned_site_allowance = customRound((fixed_site_allowance / no_of_days_in_month) * no_of_payable_days);
+            const earned_weekday_ot_wage = customRound((weekday_no_of_hours_overtime - nagativeot) * weekday_ot_price_hr);
+            const earned_sunday_holiday_ot_wage = customRound(sunday_holiday_no_of_hours_overtime * sunday_holiday_ot_price_hr);
+            const earned_ot_wage = customRound(earned_weekday_ot_wage + earned_sunday_holiday_ot_wage);
+            const earned_gross_total = customRound(earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage);
 
             //employee deduction wage data
             let deduction_pt = 0;
@@ -503,13 +582,13 @@ async function calculateEmployeeWage(employeeName, MonthYear, res) {
                 deduction_pt = 200;
             }
 
-            const deduction_epf = Math.floor(earned_basic_da * 0.12);
+            const deduction_epf = customRound(earned_basic_da * 0.12);
             const deduction_wcp = 0;
             const deduction_incometax = 0;
             const deduction_salary_advance = salary_advance;
             const deduction_fines_damages_loss = fines_damages_loss;
             const deduction_others = other_deduction;
-            const deduction_total = deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others;
+            const deduction_total = customRound(deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others);
 
             //net payable
             const net_salary = earned_gross_total - deduction_total;
@@ -583,7 +662,7 @@ async function calculateEmployeeWage(employeeName, MonthYear, res) {
             const no_of_days_in_month = workingdataResult.rows[0].no_of_days_in_month;
             const no_of_present_days = workingdataResult.rows[0].no_of_present_days;
             const national_festival_holiday = workingdataResult.rows[0].national_festival_holiday;
-            const no_of_payable_days = no_of_present_days + national_festival_holiday;
+            const no_of_payable_days = customRound(no_of_present_days + national_festival_holiday);
             console.log("no_of_payable_days", no_of_payable_days);
             const weekday_no_of_hours_overtime = workingdataResult.rows[0].weekday_no_of_hours_overtime;
             const sunday_holiday_no_of_hours_overtime = workingdataResult.rows[0].sunday_holiday_no_of_hours_overtime;
@@ -611,15 +690,15 @@ async function calculateEmployeeWage(employeeName, MonthYear, res) {
             console.log("fixed_gross_total", fixed_gross_total);
 
             //employee earned wage data
-            const earned_basic_da = Math.floor((fixed_basic_da / no_of_days_in_month) * no_of_payable_days);
-            const earned_hra = Math.floor((fixed_hra / no_of_days_in_month) * no_of_payable_days);
-            const earned_food_allowance = Math.floor((fixed_food_allowance / no_of_days_in_month) * no_of_payable_days);
-            const earned_site_allowance = Math.floor((fixed_site_allowance / no_of_days_in_month) * no_of_payable_days);
-            const earned_weekday_ot_wage = Math.floor((weekday_no_of_hours_overtime - nagativeot) * weekday_ot_price_hr);
-            const earned_sunday_holiday_ot_wage = Math.floor(sunday_holiday_no_of_hours_overtime * sunday_holiday_ot_price_hr);
-            const earned_ot_wage = earned_weekday_ot_wage + earned_sunday_holiday_ot_wage;
+            const earned_basic_da = customRound((fixed_basic_da / no_of_days_in_month) * no_of_payable_days);
+            const earned_hra = customRound((fixed_hra / no_of_days_in_month) * no_of_payable_days);
+            const earned_food_allowance = customRound((fixed_food_allowance / no_of_days_in_month) * no_of_payable_days);
+            const earned_site_allowance = customRound((fixed_site_allowance / no_of_days_in_month) * no_of_payable_days);
+            const earned_weekday_ot_wage = customRound((weekday_no_of_hours_overtime - nagativeot) * weekday_ot_price_hr);
+            const earned_sunday_holiday_ot_wage = customRound(sunday_holiday_no_of_hours_overtime * sunday_holiday_ot_price_hr);
+            const earned_ot_wage = customRound(earned_weekday_ot_wage + earned_sunday_holiday_ot_wage);
             const earned_others = 0;
-            const earned_gross_total = earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage + earned_others;
+            const earned_gross_total = customRound(earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage + earned_others);
 
             //employee deduction wage data
             let deduction_pt = 0;
@@ -627,16 +706,16 @@ async function calculateEmployeeWage(employeeName, MonthYear, res) {
                 deduction_pt = 200;
             }
 
-            const deduction_epf = Math.floor(earned_basic_da * 0.12);
+            const deduction_epf = customRound(earned_basic_da * 0.12);
             const deduction_wcp = 0;
             const deduction_incometax = 0;
             const deduction_salary_advance = salary_advance;
             const deduction_fines_damages_loss = fines_damages_loss;
             const deduction_others = other_deduction;
-            const deduction_total = deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others;
+            const deduction_total = customRound(deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others);
 
             //net payable
-            const net_salary = earned_gross_total - deduction_total;
+            const net_salary = customRound(earned_gross_total - deduction_total);
 
             const updateemployeewage = `UPDATE employeewage
                     SET earned_basic_da = $1,
@@ -680,7 +759,7 @@ async function calculateEmployeeWage(employeeName, MonthYear, res) {
 
             await client.query(updateemployeewage, updateValues);
 
-            console.log("at employee wage earned_gross_total",earned_gross_total);
+            console.log("at employee wage earned_gross_total", earned_gross_total);
 
             console.log("Employtee wage data updated successfully");
         }//end of updating employee wage
@@ -725,7 +804,7 @@ async function calculateEmployeeWagestatutory(employeeName, MonthYear, res) {
             const no_of_present_days = workingdataResult.rows[0].no_of_present_days;
             const national_festival_holiday = workingdataResult.rows[0].national_festival_holiday;
             const no_of_payable_days = no_of_present_days + national_festival_holiday;
-            console.log("no_of_payable_days",no_of_payable_days);
+            console.log("no_of_payable_days", no_of_payable_days);
 
             console.log("After reading employee working data", employeename);
 
@@ -736,7 +815,8 @@ async function calculateEmployeeWagestatutory(employeeName, MonthYear, res) {
                     earned_basic_da, 
                     earned_hra, 
                     earned_food_allowance, 
-                    earned_site_allowance, 
+                    earned_site_allowance,
+                    earned_gross_total, 
                     deduction_epf,
                     deduction_wcp,
                     deduction_pt,
@@ -763,14 +843,16 @@ async function calculateEmployeeWagestatutory(employeeName, MonthYear, res) {
             //employee earned wage data
             const earned_basic_da = getworkmenrefdataresult.rows[0].earned_basic_da;
             const workrefgross = getworkmenrefdataresult.rows[0].earned_gross_total;
-            const ot_price_hr = (workrefgross / no_of_days_in_month) / 8;
+            console.log("workrefgross",workrefgross);
+            const ot_price_hr = customRound((workrefgross / no_of_days_in_month) / 8);
+            console.log("ot_price_hr",ot_price_hr);
             const earned_hra = getworkmenrefdataresult.rows[0].earned_hra;
             const earned_food_allowance = getworkmenrefdataresult.rows[0].earned_food_allowance;
             const earned_site_allowance = getworkmenrefdataresult.rows[0].earned_site_allowance;
-            const earned_ot_wage = Math.floor(no_of_payable_days * (ot_price_hr * 2));
-            console.log("earned_ot_wage",earned_ot_wage);
+            const earned_ot_wage = customRound(no_of_payable_days * (ot_price_hr * 2));
+            console.log("earned_ot_wage", earned_ot_wage);
             let earned_incentive = 0;
-            let earned_gross_total = earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage + earned_incentive + earned_incentive;
+            let earned_gross_total = customRound(earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage + earned_incentive + earned_incentive);
 
             console.log("test3");
 
@@ -782,27 +864,27 @@ async function calculateEmployeeWagestatutory(employeeName, MonthYear, res) {
             const deduction_salary_advance = getworkmenrefdataresult.rows[0].deduction_salary_advance;
             const deduction_fines_damages_loss = getworkmenrefdataresult.rows[0].deduction_fines_damages_loss;
             let deduction_others = getworkmenrefdataresult.rows[0].deduction_others;
-            let deduction_total = deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others;
+            let deduction_total = customRound(deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others);
 
             console.log("test4");
             //net payable
             const workmen_ref_net_salary = getworkmenrefdataresult.rows[0].net_salary;
-            const net_salary = earned_gross_total - deduction_total;
+            const net_salary = customRound(earned_gross_total - deduction_total);
 
             console.log("test5");
 
-            if(net_salary > workmen_ref_net_salary){
+            if (net_salary > workmen_ref_net_salary) {
                 console.log("test6");
                 deduction_others = deduction_others + (net_salary - workmen_ref_net_salary);
-            }else{
+            } else {
                 earned_incentive = workmen_ref_net_salary - net_salary;
             }
 
-            earned_gross_total = earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage + earned_incentive + earned_incentive;
-            deduction_total = deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others;
+            earned_gross_total = customRound(earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage + earned_incentive + earned_incentive);
+            deduction_total = customRound(deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others);
 
 
-            const workmen_statutory_net_salary = earned_gross_total - deduction_total;
+            const workmen_statutory_net_salary = customRound(earned_gross_total - deduction_total);
 
             // Assuming you have calculated all the necessary values for insertion
             const insertQuery = `
@@ -870,7 +952,7 @@ async function calculateEmployeeWagestatutory(employeeName, MonthYear, res) {
             const no_of_present_days = workingdataResult.rows[0].no_of_present_days;
             const national_festival_holiday = workingdataResult.rows[0].national_festival_holiday;
             const no_of_payable_days = no_of_present_days + national_festival_holiday;
-            console.log("no_of_payable_days",no_of_payable_days);
+            console.log("no_of_payable_days", no_of_payable_days);
 
             //worker reference wage data 
             const getworkmenrfdata = `
@@ -904,7 +986,7 @@ async function calculateEmployeeWagestatutory(employeeName, MonthYear, res) {
             const get_fised_gross_salaryresult = await client.query(get_fised_gross_salary, [employeename]);
 
             const workrefgross = get_fised_gross_salaryresult.rows[0].fixed_gross_total;
-            const ot_price_hr = Math.floor((workrefgross / no_of_days_in_month )/ 8);
+            const ot_price_hr = customRound((workrefgross / no_of_days_in_month) / 8);
 
             //employee earned wage data
             const earned_basic_da = getworkmenrfdataresult.rows[0].earned_basic_da;
@@ -912,15 +994,15 @@ async function calculateEmployeeWagestatutory(employeeName, MonthYear, res) {
             const earned_food_allowance = getworkmenrfdataresult.rows[0].earned_food_allowance;
             const earned_site_allowance = getworkmenrfdataresult.rows[0].earned_site_allowance;
             console.log("test ot wage");
-            console.log("no_of_payable_days",no_of_payable_days);
-            console.log("ot_price_hr",ot_price_hr);
-            console.log("ot_price_hr",ot_price_hr*2);
-            const earned_ot_wage = Math.floor(no_of_payable_days * (ot_price_hr * 2));
-            console.log("earned_ot_wage",earned_ot_wage);
+            console.log("no_of_payable_days", no_of_payable_days);
+            console.log("ot_price_hr", ot_price_hr);
+            console.log("ot_price_hr", ot_price_hr * 2);
+            const earned_ot_wage = customRound(no_of_payable_days * (ot_price_hr * 2));
+            console.log("earned_ot_wage", earned_ot_wage);
             let earned_incentive = 0;
-            let earned_gross_total1 = earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage + earned_incentive;
+            let earned_gross_total1 = customRound(earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage + earned_incentive);
 
-           
+
             const deduction_epf = getworkmenrfdataresult.rows[0].deduction_epf;
             const deduction_wcp = getworkmenrfdataresult.rows[0].deduction_wcp;
             const deduction_pt = getworkmenrfdataresult.rows[0].deduction_pt;
@@ -928,22 +1010,22 @@ async function calculateEmployeeWagestatutory(employeeName, MonthYear, res) {
             const deduction_salary_advance = getworkmenrfdataresult.rows[0].deduction_salary_advance;
             const deduction_fines_damages_loss = getworkmenrfdataresult.rows[0].deduction_fines_damages_loss;
             let deduction_others1 = getworkmenrfdataresult.rows[0].deduction_others;
-            let deduction_total1 = deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others1;
+            let deduction_total1 = customRound(deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others1);
 
             //net payable
             const workmen_ref_net_salary = getworkmenrfdataresult.rows[0].net_salary;
-            const net_salary = earned_gross_total1 - deduction_total1;
+            const net_salary = customRound(earned_gross_total1 - deduction_total1);
 
             console.log("workmen ref netsalary", workmen_ref_net_salary);
             console.log("workmen statutory netsalary", net_salary);
 
-            console.log("before difference",earned_gross_total1);
-            console.log("bbefore difference",deduction_total1);
+            console.log("before difference", earned_gross_total1);
+            console.log("bbefore difference", deduction_total1);
 
-            if(net_salary > workmen_ref_net_salary){
+            if (net_salary > workmen_ref_net_salary) {
                 console.log("test6");
                 deduction_others1 = deduction_others1 + (net_salary - workmen_ref_net_salary);
-            }else{
+            } else {
                 earned_incentive = workmen_ref_net_salary - net_salary;
             }
 
@@ -951,13 +1033,13 @@ async function calculateEmployeeWagestatutory(employeeName, MonthYear, res) {
             //console.log("differnce ", difference);
             console.log("earned incentive", earned_incentive);
 
-            earned_gross_total1 = earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage + earned_incentive;
-            deduction_total1 = deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others1;
+            earned_gross_total1 = customRound(earned_basic_da + earned_hra + earned_food_allowance + earned_site_allowance + earned_ot_wage + earned_incentive);
+            deduction_total1 = customRound(deduction_epf + deduction_wcp + deduction_pt + deduction_incometax + deduction_salary_advance + deduction_fines_damages_loss + deduction_others1);
 
-            console.log("After difference earned_gross_total1",earned_gross_total1);
-            console.log("After difference deduction_total1",deduction_total1);
-            const workmen_statutory_net_salary = earned_gross_total1 - deduction_total1;
-            
+            console.log("After difference earned_gross_total1", earned_gross_total1);
+            console.log("After difference deduction_total1", deduction_total1);
+            const workmen_statutory_net_salary = customRound(earned_gross_total1 - deduction_total1);
+
 
             console.log("Workmen statutory net salary", workmen_statutory_net_salary);
 
@@ -1016,7 +1098,228 @@ async function calculateEmployeeWagestatutory(employeeName, MonthYear, res) {
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////
+//Calculating vendor salry wage
+async function calculatevendorwage(employeeName, MonthYear, res) {
+    try {
+        const employeename = employeeName;
+        const monthyear = MonthYear;
 
+        //check existence
+        const checkexist = `select employeename from vendorwagedata where employeename = $1 and monthyear = $2`;
+        const checkexistresult = await client.query(checkexist, [employeename, monthyear]);
+        console.log("vendor test1");
+        if (checkexistresult.rows.length == 0) {
+            console.log("vendor test2");
+            //employee or workmen working data
+            const workingdataQuery = `
+                SELECT * FROM workingdata
+                WHERE employeename = $1 and monthyear =$2`;
+
+            const workingdataResult = await client.query(workingdataQuery, [employeename, monthyear]);
+
+            console.log("vendor test3");
+            //const no_of_days_in_month = workingdataResult.rows[0].no_of_days_in_month;
+            const no_of_present_days = workingdataResult.rows[0].no_of_present_days;
+            const national_festival_holiday = workingdataResult.rows[0].national_festival_holiday;
+            const no_of_payable_days = no_of_present_days + national_festival_holiday;
+            //console.log("no_of_payable_days", no_of_payable_days);
+            const weekday_no_of_hours_overtime = workingdataResult.rows[0].weekday_no_of_hours_overtime;
+            const sunday_holiday_no_of_hours_overtime = workingdataResult.rows[0].sunday_holiday_no_of_hours_overtime;
+            const salary_advance = workingdataResult.rows[0].salary_advance;
+            console.log("vendor test4");
+            const nagativeot = workingdataResult.rows[0].nagativeot;
+            const other_deduction = workingdataResult.rows[0].other_deduction;
+            const fines_damages_loss = workingdataResult.rows[0].fines_damages_loss;
+            console.log("vendor test5");
+            //employee fixed wage data
+            const employeefixedwage = `select * from employeefixedwage where employeename = $1`;
+            const employeefixedwageresult = await client.query(employeefixedwage, [employeename]);
+
+            const fixed_basic_da = employeefixedwageresult.rows[0].fixed_basic_da;
+            //const fixed_hra = employeefixedwageresult.rows[0].fixed_hra;
+            //const fixed_food_allowance = employeefixedwageresult.rows[0].fixed_food_allowance;
+            //const fixed_site_allowance = employeefixedwageresult.rows[0].fixed_site_allowance;
+            //const fixed_gross_total = employeefixedwageresult.rows[0].fixed_gross_total;
+            console.log("vendor test6");
+            // ot price
+            const getotprice = `select ot_price_per_hr from vendorotwage where employee_name = $1`;
+            const getotpriceresult = await client.query(getotprice, [employeename]);
+            const vendor_ot_price_hr = getotpriceresult.rows[0].ot_price_per_hr;
+            console.log("vendor test7");
+            // Fetch the working hours, weekday OT type, and Sunday/holiday OT type from the contractor table
+            const getottype = `SELECT c.weekdayottype, c.sundayorholidayottype
+                FROM contractor c
+                JOIN employee e ON c.name = e.contractor_name
+                WHERE e.name = $1
+                `;
+            const getottyperesult = await client.query(getottype, [employeename]);
+
+            const weekday_ot_price_hr = vendor_ot_price_hr * getottyperesult.rows[0].weekdayottype;
+            const sunday_holiday_ot_price_hr = vendor_ot_price_hr * getottyperesult.rows[0].sundayorholidayottype;
+            console.log("vendor test7");
+            // earning wage
+
+            let nagativeotfinal = nagativeot;
+            if (nagativeotfinal < 0){
+                nagativeotfinal = -nagativeotfinal;
+            }
+        
+            const earned_salary = customRound(fixed_basic_da * no_of_payable_days);
+            const earned_otwage_weekday = customRound((weekday_no_of_hours_overtime - nagativeotfinal) * weekday_ot_price_hr);
+            const earned_otwage_sunday_holiday = customRound(sunday_holiday_no_of_hours_overtime * sunday_holiday_ot_price_hr);
+            const earned_otwage = earned_otwage_weekday + earned_otwage_sunday_holiday;
+            const gross_total = earned_salary + earned_otwage;
+            console.log("vendor test8");
+            //deduction wage
+            const deduction_total = customRound(salary_advance + other_deduction + fines_damages_loss);
+
+            const net_salary = gross_total - deduction_total;
+
+            const insertquery = `INSERT INTO vendorwagedata ( 
+                employeename, 
+                earned_salary, 
+                earned_otwage, 
+                gross_total, 
+                salary_advance, 
+                fines_damages_loss, 
+                other_deduction, 
+                deduction_total, 
+                net_salary, 
+                monthyear, 
+                date)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`;
+
+            const currentDate = new Date();
+            await client.query(insertquery, [employeename,
+                earned_salary,
+                earned_otwage,
+                gross_total, salary_advance,
+                fines_damages_loss,
+                other_deduction,
+                deduction_total,
+                net_salary,
+                monthyear,
+                currentDate]);
+
+            console.log("Vendor wage details stored successfully");
+
+        } else {
+            console.log("updating data");
+            const workingdataQuery = `
+                SELECT * FROM workingdata
+                WHERE employeename = $1 and monthyear =$2`;
+
+            const workingdataResult = await client.query(workingdataQuery, [employeename, monthyear]);
+
+            console.log("vendor test3");
+            //const no_of_days_in_month = workingdataResult.rows[0].no_of_days_in_month;
+            const no_of_present_days = workingdataResult.rows[0].no_of_present_days;
+            const national_festival_holiday = workingdataResult.rows[0].national_festival_holiday;
+            const no_of_payable_days = no_of_present_days + national_festival_holiday;
+            //console.log("no_of_payable_days", no_of_payable_days);
+            const weekday_no_of_hours_overtime = workingdataResult.rows[0].weekday_no_of_hours_overtime;
+            const sunday_holiday_no_of_hours_overtime = workingdataResult.rows[0].sunday_holiday_no_of_hours_overtime;
+            const salary_advance = workingdataResult.rows[0].salary_advance;
+            console.log("vendor test4");
+            const nagativeot = workingdataResult.rows[0].nagativeot;
+            const other_deduction = workingdataResult.rows[0].other_deduction;
+            const fines_damages_loss = workingdataResult.rows[0].fines_damages_loss;
+            console.log("vendor test5");
+            //employee fixed wage data
+            const employeefixedwage = `select * from employeefixedwage where employeename = $1`;
+            const employeefixedwageresult = await client.query(employeefixedwage, [employeename]);
+
+            const fixed_basic_da = employeefixedwageresult.rows[0].fixed_basic_da;
+            //const fixed_hra = employeefixedwageresult.rows[0].fixed_hra;
+            //const fixed_food_allowance = employeefixedwageresult.rows[0].fixed_food_allowance;
+            //const fixed_site_allowance = employeefixedwageresult.rows[0].fixed_site_allowance;
+            //const fixed_gross_total = employeefixedwageresult.rows[0].fixed_gross_total;
+            console.log("vendor test6");
+            // ot price
+            const getotprice = `select ot_price_per_hr from vendorotwage where employee_name = $1`;
+            const getotpriceresult = await client.query(getotprice, [employeename]);
+            const vendor_ot_price_hr = getotpriceresult.rows[0].ot_price_per_hr;
+            console.log("vendor test7");
+            // Fetch the working hours, weekday OT type, and Sunday/holiday OT type from the contractor table
+            const getottype = `SELECT c.weekdayottype, c.sundayorholidayottype
+                FROM contractor c
+                JOIN employee e ON c.name = e.contractor_name
+                WHERE e.name = $1
+                `;
+            const getottyperesult = await client.query(getottype, [employeename]);
+
+            const weekday_ot_price_hr = vendor_ot_price_hr * getottyperesult.rows[0].weekdayottype;
+            const sunday_holiday_ot_price_hr = vendor_ot_price_hr * getottyperesult.rows[0].sundayorholidayottype;
+            console.log("vendor test7");
+            // earning wage
+            let nagativeotfinal = nagativeot;
+            if (nagativeotfinal < 0){
+                nagativeotfinal = -nagativeotfinal;
+            }
+            console.log("nagativeotfinal",nagativeotfinal);
+            
+            const earned_salary = customRound(fixed_basic_da * no_of_payable_days);
+            const earned_otwage_weekday = customRound((weekday_no_of_hours_overtime - nagativeotfinal) * weekday_ot_price_hr);
+            const earned_otwage_sunday_holiday = customRound(sunday_holiday_no_of_hours_overtime * sunday_holiday_ot_price_hr);
+            const earned_otwage = earned_otwage_weekday + earned_otwage_sunday_holiday;
+            const gross_total = earned_salary + earned_otwage;
+            console.log("vendor test8");
+            //deduction wage
+            const deduction_total = customRound(salary_advance + other_deduction + fines_damages_loss);
+
+            const net_salary = gross_total - deduction_total;
+
+            const updatequery = `UPDATE vendorwagedata SET 
+                earned_salary = $1,
+                earned_otwage = $2, 
+                gross_total = $3, 
+                salary_advance = $4, 
+                fines_damages_loss = $5, 
+                other_deduction = $6, 
+                deduction_total = $7, 
+                net_salary = $8, 
+                monthyear = $9, 
+                date = $10`;
+
+            const currentDate = new Date();
+            await client.query(updatequery, [
+                earned_salary,
+                earned_otwage,
+                gross_total, 
+                salary_advance,
+                fines_damages_loss,
+                other_deduction,
+                deduction_total,
+                net_salary,
+                monthyear,
+                currentDate]);
+
+            console.log("Vendor wage details updated successfully");
+
+
+        }
+
+    } catch (error) {// end of try block
+        console.error('Error calculating employee wage:', error.message);
+        res.status(500).send('Internal Server Error');
+        return;
+    }
+}
+///////////////////////////////////////////////////////////////////////////////////////
+//value round off function
+function customRound(num) {
+    if (num < 0) {
+        return -customRound(-num);
+    }
+    var intPart = Math.floor(num);
+    var fracPart = num - intPart;
+    if (fracPart < 0.5) {
+        return intPart;
+    } else {
+        return Math.ceil(num);
+    }
+}
 /////////////////////////////////////////////////////////// get api's///////////////////////////////////////////////////////////////////////
 
 
@@ -1025,7 +1328,10 @@ async function calculateEmployeeWagestatutory(employeeName, MonthYear, res) {
 // GET employees name and designation
 app.get('/employeesname', async (req, res) => {
     try {
-        const { rows } = await client.query('SELECT name, designation  FROM employee');
+        const { rows } = await client.query(`SELECT e.name, e.designation, c.contractor_type
+        FROM employee e
+        INNER JOIN contractor c ON e.contractor_name = c.name;
+        `);
         res.json(rows);
     } catch (error) {
         console.error('Error executing query', error);
@@ -1090,8 +1396,8 @@ app.get('/employeewage', async (req, res) => {
         // Iterate over the rows and calculate the sum of no_of_present_days and national_festival_holiday
         rows.forEach(row => {
             // Perform addition operation
-            row.no_payable_days = row.no_of_present_days + row.national_festival_holiday;
-            row.total_ot_hrs = row.weekday_no_of_hours_overtime + row.sunday_holiday_no_of_hours_overtime;
+            row.no_payable_days = parseFloat(row.no_of_present_days) + parseFloat(row.national_festival_holiday);
+            row.total_ot_hrs = parseFloat(row.weekday_no_of_hours_overtime) + parseFloat(row.sunday_holiday_no_of_hours_overtime);
         });
 
         res.json(rows);
@@ -1142,11 +1448,11 @@ app.get('/employeewagestatutory', async (req, res) => {
         INNER JOIN employeefixedwage ef ON ef.employeename = e.employeename
         WHERE w.monthyear = $1
          `;
-        const { rows } = await client.query(query,[monthyear]);
+        const { rows } = await client.query(query, [monthyear]);
 
         rows.forEach(row => {
             // Perform addition operation
-            row.no_payable_days = row.no_of_present_days + row.national_festival_holiday;
+            row.no_payable_days = parseFloat(row.no_of_present_days) + parseFloat(row.national_festival_holiday);
             row.total_ot_hrs = row.no_payable_days;
         });
 
@@ -1179,6 +1485,34 @@ app.get('/employeeworkingdata', async (req, res) => {
 app.get('/employeefixedwage', async (req, res) => {
     try {
         const query = 'SELECT * FROM employeefixedwage';
+        const { rows } = await client.query(query);
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching employee wage data:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Define a GET endpoint to fetch CONTRACTOR TYPE
+app.get('/contractortype', async (req, res) => {
+    try {
+        const query = 'SELECT contractor_type FROM contractor';
+        const { rows } = await client.query(query);
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching employee wage data:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Define a GET endpoint to fetch employee wage data
+app.get('/vendorwagedata', async (req, res) => {
+    try {
+        const query = 'SELECT * FROM vendorwagedata';
         const { rows } = await client.query(query);
         res.json(rows);
     } catch (error) {
